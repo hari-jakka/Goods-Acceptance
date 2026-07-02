@@ -1,46 +1,34 @@
 <core:FragmentDefinition
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
+    xmlns:core="sap.ui.core"	
     xmlns:f="sap.ui.layout.form"
-    id="topdeskDialogFragment"
 >
-    <Dialog
-        id="topdeskInfoDialog"
+    <Dialog id="topdeskInfoDialog" 
         title="TOPdesk"
-        state="Information"
-    >
-        <content>
-            <VBox class="sapUiMediumMargin">
-                <Label text="{i18n>lblDepot}:" />
-                <ComboBox
-                    id="topdeskDepot"
-                    showClearIcon="true"
-                    items="{depots>/results}"
-                >
-                    <items>
-                        <core:ListItem
-                            key="{depots>Kunnr}"
-                            text="{depots>Kunnr} / {depots>Inspire_Code} - {depots>DepotName} - {depots>City} - {depots>Address} - {depots>Country}"
-                        />
-                    </items>
-                </ComboBox>
+        state="Information">
 
-                <Label text="{i18n>Obsolete}:" />
-                <TextArea id="topdeskRemarks" />
-            </VBox>
-        </content>
+		<content>
+			<VBox class="sapUiMediumMargin">
+				<Title text="{i18n>Obsolete}"/>
+                <TextArea id="deviationLongtext" 
+                    class="sapUiSmallMarginTop"
+                    cols="40"
+                    rows="6"
+                    editable="false"/>
+				<Button
+                    id="topdeskLink"
+                    class="sapUiSmallMarginTop"
+					text="{i18n>Obsolete}"
+                    press="onNavToTopDesk"/>
+			</VBox>
+		</content>
+
 
         <beginButton>
             <Button
-                text="{i18n>lblCreate}"
-                press=".onCloseTopdeskCreateDialog"
-            />
-        </beginButton>
-        <endButton>
-            <Button
-                text="{i18n>lblClose}"
+                text="{i18n>filterDialogCloseBtn}"
                 press=".onCloseTopdeskInfoDialog"
             />
-        </endButton>
+        </beginButton>
     </Dialog>
 </core:FragmentDefinition>

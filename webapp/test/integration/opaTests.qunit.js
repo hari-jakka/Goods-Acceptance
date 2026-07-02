@@ -1,6 +1,8 @@
 /* global QUnit */
 
-sap.ui.require(["zxpapap0001a/test/integration/AllJourneys"], function () {
-  QUnit.config.autostart = false;
-  QUnit.start();
+sap.ui.require([
+	"eu/aiden/ga/goodsacceptance/test/integration/AllJourneys"
+], function() {
+	QUnit.config.autostart = false;
+	QUnit.start();
 });

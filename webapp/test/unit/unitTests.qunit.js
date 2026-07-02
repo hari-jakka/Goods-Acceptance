@@ -2,9 +2,11 @@
 QUnit.config.autostart = false;
 
 sap.ui.getCore().attachInit(function () {
-  "use strict";
+	"use strict";
 
-  sap.ui.require(["zxpapap0001a/test/unit/AllTests"], function () {
-    QUnit.start();
-  });
+	sap.ui.require([
+		"eu/aiden/ga/goodsacceptance/test/unit/AllTests"
+	], function () {
+		QUnit.start();
+	});
 });

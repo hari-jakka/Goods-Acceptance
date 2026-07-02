@@ -53,9 +53,9 @@
                 id="historyDialogTable"
                 inset="false"
                 items="{
-                    path: '/ZCDS_HISTORY_GR_DETAILS',
-                    suspended: true
-                }"
+                path: '/ZCDS_HISTORY_GA',
+                suspended: true
+            }"
             >
                 <columns>
                     <Column
@@ -93,8 +93,33 @@
                     >
                         <Text text="{i18n>lblSubgroup}" />
                     </Column>
-                    <Column>
-                        <Text text="{i18n>lblSupplierBatch}" />
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblSerialNumber}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblSupplierSerialNumber}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblMake}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblModel}" />
                     </Column>
                     <Column
                         minScreenWidth="Tablet"
@@ -129,7 +154,7 @@
                         demandPopin="true"
                         popinDisplay="Inline"
                     >
-                        <Text text="{i18n>lblQTYReceived}" />
+                        <Text text="{i18n>lblQTYAccepted}" />
                     </Column>
                     <Column
                         minScreenWidth="Tablet"
@@ -137,22 +162,6 @@
                         popinDisplay="Inline"
                     >
                         <Text text="{i18n>lblUoM}" />
-                    </Column>
-
-                     <Column
-                        minScreenWidth="Tablet"
-                        demandPopin="true"
-                        popinDisplay="Inline"
-                    >
-                        <Text text="{i18n>lblQTYRevert}" />
-                    </Column>
-
-                    <Column
-                        minScreenWidth="Tablet"
-                        demandPopin="true"
-                        popinDisplay="Inline"
-                    >
-                        <Text text="" />
                     </Column>
                 </columns>
 
@@ -172,7 +181,10 @@
                                 <Text text="{MaterialDescription}" />
                             </VBox>
                             <Text text="{Subgroup}" />
-                            <Text text="{SupplierBatch}" />
+                            <Text text="{SerialNumber}" />
+                            <Text text="{VendorSerialNumber}" />
+                            <Text text="{Make}" />
+                            <Text text="{Model}" />
                             <Text
                                 text="{
                         path: 'PostingDate',
@@ -196,23 +208,9 @@
                                 size="1rem"
                             />
                             <Text
-                                text="{path: 'ReceivedQuantity', formatter: '.formatter.IntegerOrFloat'}"
+                                text="{path: 'AcceptedQuantity', formatter: '.formatter.IntegerOrFloat'}"
                             />
                             <Text text="{UoM}" />
-                            <Text
-                                text="{path: 'Storno_QTY', formatter: '.formatter.IntegerOrFloat'}"
-                            />
-
-                            <HBox visible="{= ${Storno_QTY} > 0}">
-                                <Input
-                                    change="onStornoChange"
-                                    id="stornoQuantity"
-                                />
-                                <Button
-                                    text="{i18n>lblRevert}"
-                                    press="onStorno"
-                                />
-                            </HBox>
                         </cells>
                     </ColumnListItem>
                 </items>

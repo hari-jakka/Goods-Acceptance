@@ -1,0 +1,78 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+        <headerToolbar>
+            <Toolbar>
+                <Title text="{i18n>cmpItmLstTitle}" />
+            </Toolbar>
+        </headerToolbar>
+        <Table
+            id="compItemsTable"
+            width="auto"
+            class="sapUiResponsiveMargin"
+            items="{
+			path: 'to_ComposedItems',
+			sorter: {
+				path: 'SalesOrderPosition'
+			}
+		}"
+        >
+            <columns>
+                <Column width="2rem">
+                </Column>
+                <Column
+                    width="5rem"
+                    visible="{=${device>/system/phone} ? false : true}"
+                >
+                </Column>
+                <Column>
+                    <Text
+                        text="{i18n>cmpItmLstColumnMaterial}"
+                        visible="{=${device>/system/phone} ? false : true}"
+                    />
+                </Column>
+                <Column
+                    width="5rem"
+                    hAlign="End"
+                >
+                    <Text
+                        text="{i18n>cmpItmLstColumnQuantity}"
+                        visible="{=${device>/system/phone} ? false : true}"
+                    />
+                </Column>
+            </columns>
+            <items>
+                <ColumnListItem
+                    type="{=${QuestionStatus} === 'Warning' ? 'Navigation' : 'Inactive' }"
+                    vAlign="Middle"
+                    press="onOpenComposedItemDialog"
+                >
+                    <cells>
+                        <core:Icon
+                            src="{ path:'QuestionStatus', formatter: '.formatter.questionStatusIcon'}"
+                            color="{ path:'QuestionStatus', formatter: '.formatter.questionStatusColor'}"
+                        />
+                        <Text text="{SalesOrderPosition}" />
+                        <VBox>
+                            <Title text="{MaterialName}" />
+                            <Text text="{Material}" />
+                        </VBox>
+                        <ObjectNumber
+                            number="{
+							path: 'ComponentOrderQuantity',
+							type: 'sap.ui.model.type.Float',
+							formatOptions: {
+								maxFractionDigits: 0,
+								preserveDecimals: false
+							}
+						}"
+                            unit="{OrderUnit}"
+                        />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+    </Panel>
+</core:FragmentDefinition>

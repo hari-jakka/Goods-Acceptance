@@ -1,0 +1,118 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:ndc="sap.ndc"
+>
+    <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+        <headerToolbar>
+            <Toolbar>
+                <Title text="{i18n>lblLicensedFleet}" />
+                <ToolbarSpacer />
+            </Toolbar>
+        </headerToolbar>
+       
+    <HBox
+        width=""
+        alignItems="{=${device>/system/phone} ? 'Start' : 'Center'}" 
+        justifyContent="SpaceBetween"
+        direction="{=${device>/system/phone} ? 'Column' : 'Row'}"
+        class="sapUiResponsiveMargin"
+    >
+        <HBox
+            width=""
+            class="sapUiResponsiveMargin"
+            justifyContent="Center"
+            alignItems="Baseline"
+            alignContent="Center"
+        >
+            <Title text="{i18n>lblEnterLicensePlate}" />
+        </HBox>
+            <HBox
+                width="100%"
+                justifyContent="End"
+                class="sapUiResponsiveMargin"
+            >   
+                <Input
+                    id="licensePlateInput"
+                    class="sapUiTinyMarginBegin"
+                    busyIndicatorDelay="0"
+                    placeholder="{i18n>lblLicensePlate}"
+                    value="{objectView>/licensePlate}"
+                    valueState="{objectView>/licensePlateState}"
+                    submit="validateLicensePlate"
+                    change="validateLicensePlate"
+                />
+
+                <VBox
+                    width="2rem"
+                    class="sapUiTinyMarginBegin"
+                    justifyContent="Center"
+                    alignItems="Center"
+                >
+                    <core:Icon
+                        id="licensePlateValidIcon"
+                        src="sap-icon://message-success"
+                        size="1.5rem"
+                        color="Positive"
+                        visible="{objectView>/licensePlateValid}"
+                    />
+                </VBox>
+            </HBox>          
+    </HBox>
+
+     <HBox
+        width=""
+        alignItems="{=${device>/system/phone} ? 'Start' : 'Center'}"
+        justifyContent="SpaceBetween"
+        direction="{=${device>/system/phone} ? 'Column' : 'Row'}"
+        class="sapUiResponsiveMargin"
+    >
+        <HBox
+            width=""
+            class="sapUiResponsiveMargin"
+            justifyContent="Center"
+            alignItems="Baseline"
+            alignContent="Center"
+        >
+            <!-- <Label
+                text=""
+                required="true"
+                width="1rem"
+            /> -->
+            <Title text="{i18n>lblEnterVIN}" />
+        </HBox>
+
+
+            <HBox
+                width="100%"
+                justifyContent="End"
+                class="sapUiResponsiveMargin"
+            >         
+                <Input
+                    id="vinInput"
+                    class="sapUiTinyMarginBegin"
+                    busyIndicatorDelay="0"
+                    placeholder="{i18n>lblVIN}"
+                    value="{objectView>/vin}"
+                    valueState="{objectView>/vinState}"
+                    submit=""
+                    change="onVINChange"
+                />
+
+                <VBox
+                    width="2rem"
+                    class="sapUiTinyMarginBegin"
+                    justifyContent="Center"
+                    alignItems="Center"
+                >
+                    <core:Icon
+                        src="sap-icon://message-success"
+                        size="1.5rem"
+                        color="Positive"
+                        visible="{objectView>/vinValid}"
+                    />
+                </VBox>
+            </HBox>        
+    </HBox>
+    </Panel>
+</core:FragmentDefinition>

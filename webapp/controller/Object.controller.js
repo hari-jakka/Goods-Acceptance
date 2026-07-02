@@ -1,755 +1,1460 @@
-sap.ui.define(
-  [
+sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/routing/History",
-    "../model/formatter",
+    "sap/m/CustomListItem",
+    "eu/aiden/ga/goodsacceptance/controller/Question",
+    "eu/aiden/ga/goodsacceptance/controller/ComposedItemDialog",
+    "sap/m/HBox",
+    "sap/m/Title",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
-    "sap/m/Button",
-    "sap/m/Text",
+    "../model/formatter",
     "sap/m/Dialog",
-  ],
-  function (
-    BaseController,
-    JSONModel,
-    History,
-    formatter,
-    MessageToast,
-    MessageBox,
-    Button,
-    Text,
-    Dialog,
-  ) {
+    "sap/m/Button",
+    "sap/m/ButtonType",
+    "sap/m/Text",
+    "sap/m/VBox",
+    "sap/m/Panel",
+    "sap/m/Bar",
+    "sap/ui/core/Icon",
+], function (BaseController, JSONModel, History, CustomListItem, Question, ComposedItemDialog, HBox, Title, MessageToast, MessageBox, formatter, Dialog, Button, ButtonType, Text, VBox, Panel, Bar, Icon) {
     "use strict";
 
-    return BaseController.extend("zxpapap0001a.controller.Object", {
-      formatter: formatter,
+    return BaseController.extend("eu.aiden.ga.goodsacceptance.controller.Object", {
 
-      /* =========================================================== */
-      /* lifecycle methods                                           */
-      /* =========================================================== */
+        formatter: formatter,
+        oQuestion: Question,
+        oComposedItemDialogController: ComposedItemDialog,
 
-      /**
-       * Called when the worklist controller is instantiated.
-       * @public
-       */
-      onInit: function () {
-        // Model used to manipulate control states. The chosen values make sure,
-        // detail page shows busy indication immediately so there is no break in
-        // between the busy indication for loading the view's meta data
-        var oViewModel = new JSONModel({
-          busy: true,
-          delay: 0,
-        });
-        this.getRouter()
-          .getRoute("object")
-          .attachPatternMatched(this._onObjectMatched, this);
-        this.setModel(oViewModel, "objectView");
+        /* =========================================================== */
+        /* lifecycle methods                                           */
+        /* =========================================================== */
 
-        sap.ui.require(["sap/ushell/Container"], async (Container) => {
-          const oNavigationService =
-            await Container.getServiceAsync("Navigation");
-          this.oNavigationService = oNavigationService;
-        });
-      },
-      /* =========================================================== */
-      /* event handlers                                              */
-      /* =========================================================== */
-
-      /**
-       * Event handler  for navigating back.
-       * It there is a history entry we go one step back in the browser history
-       * If not, it will replace the current entry of the browser history with the worklist route.
-       * @public
-       */
-      onNavBack: function () {
-        let oUpload = this.byId("UploadSet");
-        if (oUpload) {
-          oUpload.removeAllItems();
-        }
-        var sPreviousHash = History.getInstance().getPreviousHash();
-        if (sPreviousHash !== undefined) {
-          // eslint-disable-next-line fiori-custom/sap-no-history-manipulation
-          history.go(-1);
-        } else {
-          this.getRouter().navTo("worklist", {}, true);
-        }
-      },
-
-      onOpenPictures: function (oEvent) {
-        this.pictureDialog ??= this.loadFragment({
-          name: "zxpapap0001a.fragments.DelNotePicture",
-        });
-
-        this.pictureDialog.then((oDialog) => this.openPictureDialog(oDialog));
-      },
-
-      openPictureDialog: function (oDialog) {
-        //  this.byId("UploadSet").setUploadUrl(this.getOwnerComponent().getModel().sServiceUrl + "/AttachmentSet");
-        oDialog.open();
-      },
-
-      onOpenPicturesDamage: function (oEvent) {
-        this.pictureDialogDamage ??= this.loadFragment({
-          name: "zxpapap0001a.fragments.DelNotePictureDamage",
-        });
-
-        this.pictureDialogDamage.then((oDialog) =>
-          this.openPictureDialogDamage(oDialog),
-        );
-      },
-
-      openPictureDialogDamage: function (oDialog) {
-        //  this.byId("UploadSet").setUploadUrl(this.getOwnerComponent().getModel().sServiceUrl + "/AttachmentSet");
-        oDialog.open();
-      },
-
-      showDelNoteImage: function (evt) {
-        const filename = evt.getSource().getProperty("text");
-        const sections = filename.split(".");
-        const extension = sections[sections.length - 1].toLowerCase();
-
-        var sSrc = evt.getSource().getTarget();
-        var baseurl = this.getOwnerComponent().getModel().sServiceUrl;
-        var es =
-          "/DelNoteAttachSet(DocumentId='" + sSrc + "',ObjectId='')/$value";
-        var fullurl = baseurl + es;
-
-        if (extension === "pdf") {
-          var oModel = this.getOwnerComponent().getModel();
-          var sToken = oModel.getSecurityToken();
-          fetch(fullurl, {
-            headers: { "X-CSRF-Token": sToken },
-            credentials: "include",
-          })
-            .then(function (response) { return response.blob(); })
-            .then(function (blob) {
-              var blobUrl = URL.createObjectURL(blob);
-              var oIframe = new sap.ui.core.HTML({
-                content: '<iframe src="' + blobUrl + '" style="width:100%;height:75vh;border:none;display:block;"></iframe>',
-              });
-              var oDialog1 = new Dialog({
-                contentWidth: "90%",
-                content: oIframe,
-                beginButton: new sap.m.Button({
-                  text: "Close",
-                  press: function () { oDialog1.close(); },
-                }),
-                endButton: new sap.m.Button({
-                  icon: "sap-icon://download",
-                  text: "Download",
-                  press: function () {
-                    var oLink = document.createElement("a");
-                    oLink.href = blobUrl;
-                    oLink.download = filename;
-                    oLink.click();
-                  },
-                }),
-                afterClose: function () {
-                  URL.revokeObjectURL(blobUrl);
-                  oDialog1.destroy();
-                },
-              });
-              oDialog1.open();
+        /**
+         * Called when the worklist controller is instantiated.
+         * @public
+         */
+        onInit: function () {
+            // Model used to manipulate control states. The chosen values make sure,
+            // detail page shows busy indication immediately so there is no break in
+            // between the busy indication for loading the view's meta data
+            let oViewModel = new JSONModel({
+                busy: true,
+                delay: 0,
+                serialFlex: false,
+                serialValid: false,
+                serialState: 'None',
+                newSerialnumber: '',
+                vendorSerialValid: false,
+                vendorSerialState: 'None',
+                vendorSerialnumber: '',
+                vinValid: false,
+                vinState: 'None',
+                vin: '',
+                quantityValid: false,
+                transferFlexAnswers: false,
+                composedItems: false,
             });
-        } else {
-          var oDialog1 = new Dialog({
-            content: new sap.m.Image({ src: fullurl }),
-            beginButton: new sap.m.Button({
-              text: "Close",
-              press: function () { oDialog1.close(); },
-            }),
-            afterClose: function () { oDialog1.destroy(); },
-          });
-          oDialog1.open();
-        }
-      },
+            this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
+            this.setModel(oViewModel, "objectView");
 
-      handleUploadPress: function (oEvent) {
-        const that = this;
-        const oModel = this.getModel();
-        let oFileUploader = this.byId("fileUploader");
-        let sDelivery = this.getView().byId("_val20").getText();
-        let sFileName =
-          "DeliveryNote_" +
-          oFileUploader.getProperty("value") +
-          ";" +
-          sDelivery +
-          ";" +
-          this.getView().getBindingContext().getProperty("DeliveryType");
+            this.viewId = this.getView().getId();
+            this.oQuestion.viewId = this.getView().getId();
+            this.oQuestion.controller = this;
 
-        oModel.refreshSecurityToken();
+            this.oComposedItemDialogController.onInit(this);
 
-        oFileUploader.destroyHeaderParameters();
-        oFileUploader.setUploadUrl(
-          this.getOwnerComponent().getModel().sServiceUrl + "/DelNoteAttachSet",
-        );
-        oFileUploader
-          .checkFileReadable()
-          .then(
-            async function () {
-              oFileUploader.addHeaderParameter(
-                new sap.ui.unified.FileUploaderParameter({
-                  name: "slug",
-                  value: sFileName,
-                  // value: "DeliveryNote;" + sDelivery
-                }),
-              );
-              oFileUploader.addHeaderParameter(
-                new sap.ui.unified.FileUploaderParameter({
-                  name: "X-CSRF-Token",
-                  value: oModel.getSecurityToken(),
-                }),
-              );
-              oFileUploader.setSendXHR(true);
-              await oFileUploader.upload();
-            },
-            function (error) {
-              MessageToast.show(
-                "The file cannot be read. It may have changed.",
-              );
-            },
-          )
-          .then(
-            function () {
-              oFileUploader.clear();
-              MessageToast.show(that.getModel("i18n").getResourceBundle().getText("msgImageStored"));
+            // this.composedItemDialog = this.loadFragment({
+            //     name: "eu.aiden.ga.goodsacceptance.fragments.ComposedItemDialog"
+            // }).then(function(oDialog){
+            //     this.composedItemDialog = oDialog
+            // }.bind(this));
+            // this.getOwnerComponent().getModel().setDeferredGroups(["answerGroup"]);
 
-              oModel.refresh();
+            let self = this;
+            sap.ui.require(["sap/ushell/Container"], async (Container) => {
+                const oNavigationService = await Container.getServiceAsync("Navigation");
+                this.oNavigationService = oNavigationService;
+            });
 
-              setTimeout(() => {
-                oModel.refresh();
-              }, 1500);
+            this.getOwnerComponent().getService("ShellUIService").then(function (oShellService) {
+                oShellService.setBackNavigation(this.onNavBack.bind(this))
+            }.bind(this));
 
-              that.onClosePictureDialog();
-            }.bind(this),
-          );
-      },
+        },
+        /* =========================================================== */
+        /* event handlers                                              */
+        /* =========================================================== */
 
-      handleUploadPressDamage: function () {
-        const that = this;
-        const oModel = this.getModel();
-        let oFileUploader = this.byId("fileUploaderDamage");
 
-        const view = this.getView();
+        /**
+         * Event handler  for navigating back.
+         * It there is a history entry we go one step back in the browser history
+         * If not, it will replace the current entry of the browser history with the worklist route.
+         * @public
+         */
 
-        oModel.refreshSecurityToken();
-        oFileUploader.destroyHeaderParameters();
-        oFileUploader.setUploadUrl(
-          this.getOwnerComponent().getModel().sServiceUrl + "/DelNoteAttachSet",
-        );
-        oFileUploader
-          .checkFileReadable()
-          .then(
-            function () {
-              oFileUploader.addHeaderParameter(
-                new sap.ui.unified.FileUploaderParameter({
-                  name: "slug",
-                  value:
-                    "DamagePicture;" + view.byId("_linknotifdamage").getText(),
-                }),
-              );
-              oFileUploader.addHeaderParameter(
-                new sap.ui.unified.FileUploaderParameter({
-                  name: "X-CSRF-Token",
-                  value: oModel.getSecurityToken(),
-                }),
-              );
-              oFileUploader.setSendXHR(true);
-              oFileUploader.upload();
-            },
-            function (error) {
-              MessageToast.show(
-                "The file cannot be read. It may have changed.",
-              );
-            },
-          )
-          .then(
-            function () {
-              oFileUploader.clear();
-              MessageToast.show(that.getModel("i18n").getResourceBundle().getText("msgImageStored"));
-            }.bind(this),
-          );
+        onOpenPictures: function () {
+            this.pictureDialog ??= this.loadFragment({
+                name: "eu.aiden.ga.goodsacceptance.fragments.PictureDialog"
+            });
 
-        // var oFileUploader = this.byId("fileUploaderDamage");
-        // if (!this.csrfToken) {
-        //     this.csrfToken = this.getView().getModel().oHeaders['x-csrf-token'];
-        //     oFileUploader.setSendXHR(true);
-        //     oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
-        //         name: "X-CSRF-Token", value: this.csrfToken}));
-        //     oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
-        //         name: "slug", value: "DamagePicture;" + this.getView().byId("_linknotifdama").getText()
-        //     }));
-        // }
-        // oFileUploader.setUploadUrl(`${this.getOwnerComponent().getModel().sServiceUrl}/AttachmentSet`)
-        // oFileUploader.checkFileReadable().then(function() {
-        // 	oFileUploader.upload();
-        // }, function(error) {
-        // 	MessageToast.show("The file cannot be read. It may have changed.");
-        // }).then(function() {
-        // 	oFileUploader.clear();
-        // });
-      },
+            this.pictureDialog.then((oDialog) =>
+                this.openPictureDialog(oDialog)
+            );
+        },
 
-      onBeforeUploadStarts: function (oEvent) {
-        var oUploadSet = oEvent.getSource();
-        var oItemToUpload = oEvent.getParameter("item");
-        var oCustomerHeaderToken = new sap.ui.core.Item({
-          key: "x-csrf-token",
-          text: this.getModel().getSecurityToken(),
-        });
+        openPictureDialog: function (oDialog) {
+            this.byId("UploadSet").setUploadUrl(this.getOwnerComponent().getModel().sServiceUrl + "/AttachmentSet");
+            oDialog.open();
+        },
 
-        // Header Slug
-        var sDeliveryDocument = this.getView()
-          .getBindingContext()
-          .getProperty("DeliveryDocument");
-        var oCustomerHeaderSlug = new sap.ui.core.Item({
-          key: "slug",
-          text: oItemToUpload.getFileName() + ";" + sDeliveryDocument,
-        });
+        onClosePictureDialog: function () {
+            this.byId("pictureDialog").close();
+        },
 
-        oUploadSet.removeAllHeaderFields();
-        oUploadSet.addHeaderField(oCustomerHeaderToken);
-        oUploadSet.addHeaderField(oCustomerHeaderSlug);
-      },
+        uploadAllAttachments: function () {
+            let oUpload = this.byId("UploadSet");
+            oUpload.setUploadUrl(this.getOwnerComponent().getModel().sServiceUrl + "/AttachmentSet");
 
-      onClosePictureDialog: function (oEvent) {
-        this.byId("DelNotePictureDialog").close();
-      },
+            if (oUpload) {
+                let aItems = oUpload.getIncompleteItems();
 
-      onClosePictureDialogDamage: function (oEvent) {
-        this.byId("DelNotePictureDamageDialog").close();
-      },
+                if (aItems.length > 0) {
+                    oUpload.upload();
+                }
+            }
+        },
+        onPressTopdesk: function (oEvent) {
+            const url = oEvent.getSource().getBindingContext().getProperty("URL")
 
-      /* =========================================================== */
-      /* internal methods                                            */
-      /* =========================================================== */
+            if (url) {
+                window.open(url, "_blank");
+            }
+        },
 
-      /**
-       * Binds the view to the object path.
-       * @function
-       * @param {sap.ui.base.Event} oEvent pattern match event in route 'object'
-       * @private
-       */
-      _onObjectMatched: function (oEvent) {
-        var sObjectId = oEvent.getParameter("arguments").objectId;
-        var sObjectPath = "/ZOPEN_DELIVERY_OVERVIEW_GR" + sObjectId;
-        this._bindView(sObjectPath);
-        this.getView().getElementBinding().refresh(true);
-      },
+        onIncidentType05: function (oEvent) {
+            const that = this;
 
-      /**
-       * Binds the view to the object path.
-       * @function
-       * @param {string} sObjectPath path to the object to be bound
-       * @private
-       */
-      _bindView: function (sObjectPath) {
-        var oViewModel = this.getModel("objectView");
+            this.incidentTypeDialog05 = this.createTopdeskDialog("incidentTypeDialog05", "05", () => {
+                const model = that.getModel();
+                model.refresh();
+            }, () => {
 
-        this.getView().bindElement({
-          path: sObjectPath,
-          events: {
-            change: this._onBindingChange.bind(this),
-            dataRequested: function () {
-              oViewModel.setProperty("/busy", true);
-            },
-            dataReceived: function () {
-              oViewModel.setProperty("/busy", false);
-            },
-          },
-        });
-      },
+            });
+            this.incidentTypeDialog05.open();
+        },
 
-      takePhotoPS: function () {
-        var that = this;
-        this.fixedDialog = new Dialog({
-          title: "Click on Capture to take photo",
-          beginButton: new sap.m.Button({
-            text: "Capture Photo",
-            press: function () {
-              // TODO: get the object of our video player
-              // take image object and set to main page.
-              that.imageVal = document.getElementById("player");
-              that.fixedDialog.close();
-            },
-          }),
-          content: [
-            new sap.ui.core.HTML({
-              content: "<video id='player' autoplay></video>",
-            }),
-            //new sap.m.Input({
-            //    placeholder: 'please enter image name here',
-            //    required: true
-            //})
-          ],
-          endButton: new sap.m.Button({
-            text: "Cancel",
-            press: function () {
-              that.fixedDialog.close();
-            },
-          }),
-        });
+        onIncidentType06: function (oEvent) {
+            const that = this;
 
-        this.getView().addDependent(this.fixedDialog);
-        this.fixedDialog.open();
+            this.incidentTypeDialog06 = this.createTopdeskDialog("incidentTypeDialog06", "06", () => {
+                const model = that.getModel();
+                model.refresh();
+            }, () => {
+            });
+            this.incidentTypeDialog06.open();
+        },
 
-        this.fixedDialog.attachBeforeClose(this.setImage, this);
+        onIncidentType13: function (oEvent) {
+            const that = this;
 
-        var handleSuccess = function (stream) {
-          //this.imageVal.srcObject = stream;
-        };
+            this.incidentTypeDialog13 = this.createTopdeskDialog("incidentTypeDialog13", "13", () => {
+                const model = that.getModel();
+                model.refresh();
+            }, () => {
+            });
+            this.incidentTypeDialog13.open();
+        },
 
-        navigator.mediaDevices
-          .getUserMedia({
-            video: true,
-          })
-          .then(handleSuccess);
-      },
 
-      setImage: function () {
-        // take image and write to backend?
-      },
+        onBeforeUploadStarts: function (oEvent) {
+            const sNotification = this.sNotification;
+            const oContext = this.getView().getBindingContext();
+            const sDelivery = oContext.getProperty("DeliveryDocument");
+            const sDeliveryPosnr = oContext.getProperty("DeliveryPosition");
 
-      onConfirm: function (sEvent) {
-        const context = this.getView()
-          .getBindingContext();
+            const oUploadSet = oEvent.getSource();
+            const oItemToUpload = oEvent.getParameter("item");
+            const oCustomerHeaderToken = new sap.ui.core.Item({
+                key: "x-csrf-token",
+                text: this.getModel().getSecurityToken()
+            });
 
-        if (context.getProperty("IsBlocked") != '') {
-          const condition = context.getProperty("DelNoteAvailable") == 'N';
 
-          const msg = this
-            .getResourceBundle()
-            .getText(condition ? "msgDelNoteMissing" : "msgOpenTopdeskIncident");
+            // Header Slug
+            const sFileName = "Deviation_" + sDelivery + "-" + sDeliveryPosnr + "_" + oItemToUpload.getFileName();
 
-          MessageToast.show(msg);
-          return;
-        }
+            const oCustomerHeaderSlug = new sap.ui.core.Item({
+                key: "slug",
+                text: sFileName + ";" + sNotification
+            });
 
-        const processIndicator = context
-          .getProperty("ProcessIndicator");
+            oUploadSet.removeAllHeaderFields();
+            oUploadSet.addHeaderField(oCustomerHeaderToken);
+            oUploadSet.addHeaderField(oCustomerHeaderSlug);
+        },
 
-        const that = this;
+        onNavBack: async function (bRefreshWorklist) {
+            if (!bRefreshWorklist) {
+                bRefreshWorklist = true;
+            }
 
-        const source = sEvent.getSource();
+            let oViewData = this.getModel("objectView").getData();
 
-        if (this.validateInput()) {
-          var oEntry = {};
-          //var sPath = this._oDialog.getBindingContext().sPath;
-          var d = this.getView().byId("_val20").getText();
-          oEntry.DeliveryDocument = this.getView().byId("_val20").getText();
-          oEntry.DeliveryPosition = this.getView().byId("_val26").getText();
-          oEntry.ReceivedQuantity = this.getView().byId("_val23").getValue();
-          oEntry.OpenQuantity = context.getProperty("OpenQuantity");
-          const oUserInfo = sap.ushell.Container.getService("UserInfo");
-          const sFirstName = oUserInfo.getUser().getFirstName();
-          const sLastName = oUserInfo.getUser().getLastName();
+            if (oViewData.serialFlex && oViewData.transferFlexAnswers) {
+                this.transferFlexAnswers();
+            }
 
-          oEntry.bktxt = formatName(sFirstName, sLastName);
-          // if (this.getView().byId("_val24").getState() === true) {
-          //     oEntry.DeliveryNotePresent = "X";
-          // } else {
-          //     oEntry.DeliveryNotePresent = "";
-          // }
+            this.getModel("objectView").setProperty("/serialFlex", false);
+            this.getModel("objectView").setProperty("/transferFlexAnswers", false);
 
-          // that.getComponent().setBusy(true);
-          source.setBusy(true);
-          var oModel = this.getView().getModel();
-          oModel.setUseBatch(false);
-          oModel.create("/ZXPAP0001_Delivery", oEntry, {
-            success: function () {
-              source.setBusy(false);
+            let oUpload = this.byId("UploadSet");
+            if (oUpload) {
+                oUpload.removeAllItems();
+            }
 
-              const isOrange = ["0", "1", "3"].indexOf(processIndicator) > -1;
-              // console.log("ProcessIndicator, type: ", processIndicator, typeof processIndicator, isOrange);
+            //Initialize the answers object of the composed items
+            this.oComposedItemDialogController.oAnswers = {};
 
-              if (isOrange) {
-                // oranje
+            if (bRefreshWorklist) {
+                // this.getOwnerComponent().refreshDeliveryTableBinding();
+                // this.getOwnerComponent().getModel().refresh();
+            }
+
+            let sPreviousHash = History.getInstance().getPreviousHash();
+            if (sPreviousHash !== undefined) {
+                // eslint-disable-next-line fiori-custom/sap-no-history-manipulation
+                history.go(-1);
+            } else {
+                this.getRouter().navTo("worklist", {}, true);
+            }
+        },
+
+        onExit: function () {
+            const oViewData = this.getModel("objectView").getData();
+            if (oViewData.serialFlex && oViewData.transferFlexAnswers) {
+                this.transferFlexAnswers();
+            }
+        },
+
+        /* =========================================================== */
+        /* internal methods                                            */
+        /* =========================================================== */
+
+        _questionLineFactory: function (sId, oContext) {
+            let bPhone = this.getOwnerComponent().getModel("device").getProperty("/system/phone");
+            let oLine = this.oQuestion.createQuestionLine(sId, oContext, bPhone);
+
+            return oLine;
+        },
+
+        onCreateNotification: async function () {
+            let oContext = this.getView().getBindingContext();
+            let oComponent = this.getOwnerComponent();
+            const oTarget = {
+                target: {
+                    semanticObject: "GrGaNotifications",
+                    action: "Display"
+                },
+                params: {
+                    "Depot": oContext.getProperty("Depot"),
+                    "Delivery": oContext.getProperty("Delivery") + "/" + oContext.getProperty("DeliveryPosnr"),
+                    "Equipment": oContext.getProperty("EquipmentID")
+                },
+                appSpecificRoute: "Create"
+            }
+
+            // const sHref = await this.oNavigationService.getHref(oTarget, oComponent);
+
+            // oTarget.target.shellHash = sHref;
+
+            this.oNavigationService.navigate(oTarget, oComponent);
+
+        },
+
+        onScanSuccess: function (oEvent) {
+            // get the id of the scan button
+            const sScanBtnId = oEvent.getSource().getId().split("object--")[1];
+            const sInputFieldId = sScanBtnId.split("ScannerButton")[0] + "Input";
+
+            if (oEvent.getParameter("cancelled")) {
+                MessageToast.show("Scan cancelled", { duration: 1000 });
+            } else {
+                if (oEvent.getParameter("text")) {
+                    let sValue = oEvent.getParameter("text");
+
+                    if (sScanBtnId === "serialScannerButton") {
+
+                        if (sValue.search("/u/" !== -1)) {                  // "/u/" geeft aan dat er een uniek serienummer in de QR zit
+                            let sSerial = sValue.split("/").pop(); //Laatste deel van de url string uit QR is het serienummer
+                            this.byId(sInputFieldId).setValue(sSerial);
+                            this.validateSerialnumber();
+                        } else {
+                            MessageToast.show("No Serialnumber found");
+                        }
+                    } else if (sScanBtnId === "vendorSerialScannerButton") {
+                        this.byId(sInputFieldId).setValue(sValue);
+                        this.validateVendorSerialnumber();
+
+                    } else {
+                        this.byId(sInputFieldId).setValue(sValue);
+                    }
+                }
+            }
+        },
+
+        onQuantityChange: function (oEvent) {
+            this.validateQuantity();
+        },
+
+        onVINChange: function (oEvent) {
+            const oModel = this.getModel("objectView");
+            const sVIN = oModel.getProperty("/vin");
+
+            // Convert to uppercase
+            if (sVIN) {
+                oModel.setProperty("/vin", sVIN.toUpperCase());
+            }
+
+            this.validateVIN();
+        },
+
+        onSave: async function () {
+        
+            // this.uploadAllAttachments();
+
+            // this.determineFlexScenario();
+
+
+            // validate serialnumber if applicable
+            const oViewData = this.getModel("objectView").getData();
+
+            const context = this.getView().getBindingContext();
+            const indirectScenario = context.getProperty("DeliveryType") == '7';
+            const licenseFleet = context.getProperty("LicensedFleet") == 'Y';
+
+            if (oViewData.serialFlex) {
+                await this.validateSerialnumber();
+                const isSerialValid = this.getModel("objectView").getProperty("/serialValid");
+                console.log(isSerialValid);
+                if (!isSerialValid) {
+                    return;
+                }
+
+                if (indirectScenario && !this.validateVendorSerialnumber()) {
+                    sap.m.MessageBox.warning(this.getResourceBundle().getText("msgInvalidSerialEQVendorSerial"), { title: "" });
+                    return;
+                }
+            } else if (!this.validateQuantity()) {
+                sap.m.MessageBox.warning(this.getResourceBundle().getText("msgQuantityInvalid"), { title: "" });
+                return;
+            }
+
+            // Validate VIN if licensed fleet
+            if (licenseFleet && !this.validateVIN()) {
+                return;
+            }
+
+            let aQuestions = this.byId("questionTableMain").getItems(),
+                oModel = this.getModel(),
+                that = this;
+
+            this.aNewEntries = [];
+            this.bAllAnswered = true;
+            this.bDeviation = false;
+            this.aNotifDeviationText = [];
+
+            const oUserInfo = sap.ushell.Container.getService("UserInfo");
+            const sFirstName = oUserInfo.getUser().getFirstName();
+            const sLastName = oUserInfo.getUser().getLastName();
+
+            for (let index = 0; index < aQuestions.length; index++) {
+                const oQuestion = aQuestions[index];
+
+                let rowNumber = oQuestion.getId().split("questionTableMain-")[1];
+                let oDeliveryData = this.getView().getBindingContext().getObject();
+
+                let oContext = oQuestion.getBindingContext();
+                let oQuestionData = oContext.getObject();
+                let oDisplay = oContext.getProperty("to_AnswersDisplay");
+
+                let oAnswerControl = this.byId("answerControlMain-" + rowNumber);
+                let sAnswerValue = oAnswerControl.getAnswer();
+
+
+                let oEntry = {};
+
+                if (oAnswerControl.getDeviation) {
+                    if (oAnswerControl.getDeviation()) {
+                        this.bDeviation = true;
+                        oEntry.Deviation = "D";
+
+                        this.aNotifDeviationText.push(oAnswerControl.getDeviationText());
+                    }
+                }
+                oEntry.Delivery = oDeliveryData.DeliveryDocument;
+                oEntry.DeliveryPosnr = oDeliveryData.DeliveryPosition;
+                oEntry.OpenQty = oDeliveryData.OpenQuantity;
+                oEntry.SalesOrder = ''            // Only filled in case of Composed Items
+                oEntry.SalesOrderPosition = ''    // Only filled in case of Composed Items
+                oEntry.EquipmentID = oDeliveryData.EquipmentID === '1' ? '' : oDeliveryData.EquipmentID;
+                oEntry.BulkUnique = oDeliveryData.BulkDelivery ? "0" : "1";
+                oEntry.classnum = oQuestionData.classnum;
+                oEntry.charact = oQuestionData.Charact;
+                oEntry.AnswerValue = sAnswerValue;
+                oEntry.bktxt = formatName(sFirstName, sLastName);
+                oEntry.SerialNumber = this.getModel("objectView").getProperty("/newSerialnumber");
+           
+                // const serialFlex = this.getModel("objectView").getProperty("/serialFlex");
+
+                // console.log("serial flex", serialFlex);
+                // console.log(this.getModel("objectView").getProperty("/newSerialnumber"));
+
+                // if (serialFlex) {
+                //     oEntry.SerialNumber = this.getModel("objectView").getProperty("/newSerialnumber");
+                // }
+
+                // console.log(oEntry);
+
+                this.aNewEntries.push(oEntry);
+
+                if (oDisplay.Required && oDisplay.Visible && sAnswerValue === "") {
+                    this.bAllAnswered = false;
+                    oAnswerControl.setValueState(sap.ui.core.ValueState.Error);
+                    oAnswerControl.setValueStateText(this.getResourceBundle().getText("msgFillValue"))   //("Vul een waarde in s.v.p.");
+                } else {
+                    oAnswerControl.setValueState();
+                }
+            }
+
+            if (indirectScenario) {
+                this.bAllAnswered = this.addVendorSerialAnswer(this.bAllAnswered);
+            }
+
+            if (licenseFleet) {
+                this.bAllAnswered = this.addLicensePlateNumberAndVIN(this.bAllAnswered);
+            }
+
+            if (!oViewData.serialFlex) {
+                this.bAllAnswered = this.addQuantityAnswer(this.bAllAnswered);
+            }
+
+            // this.bDeviation = this.quantityDeviations(this.bDeviation);
+
+            this.bAllAnswered = this.composedItemsAnswered(this.bAllAnswered);
+            console.log(this.bAllAnswered);
+            this.bDeviation = this.composedItemsDeviations(this.bDeviation);
+
+
+            if (!this.bAllAnswered) {
+                sap.m.MessageBox.warning(this.getResourceBundle().getText("msgFillAllAnswers"), { title: "" });
+                return;
+            }
+
+            if (this.bDeviation) {
+                let sText = "";
+                // Write the regular deviation texts 
+                this.aNotifDeviationText.forEach(function (sDeviationLine) {
+                    sText += sDeviationLine + " \n";
+                });
+
+                // add the composed items deviation texts 
+                this.sNotifText = this.composedItemsDeviationsText(sText);
+
+                // TODO: Set sNotifText on Remarks input field
+                // TODO: Open topdeskDeviationDialog
+
+                // this.onOpenNotifDialog();
+                // this.open(); // TODO: Open dialog for Incident Type 08
+                this.openTopdeskInfoDialog();
+            } else {
+                //Answers from the Composed item will be added within method "saveAnswers"
+                this.saveAnswers();
+            }
+        },
+
+        addVendorSerialAnswer: function (bAllAnswered) {
+            const oUserInfo = sap.ushell.Container.getService("UserInfo");
+            const sFirstName = oUserInfo.getUser().getFirstName();
+            const sLastName = oUserInfo.getUser().getLastName();
+
+            let bAnswered = true;
+            const oDeliveryData = this.getView().getBindingContext().getObject();
+
+            if (!oDeliveryData.DeliveryDocument || oDeliveryData.BulkDelivery) {
+                return bAllAnswered;
+            }
+
+            if (oDeliveryData.BulkDelivery) {
+                return bAllAnswered;
+            }
+
+            let sValueState = "None";
+            const oVendorSerialInput = this.byId("vendorSerialInput");
+
+            if (oVendorSerialInput.getValue() === "") {
+                sValueState = "Error";
+                bAnswered = false;
+            } else {
+                this.getModel("objectView").setProperty("/vendorSerialValid", true)
+            }
+            oVendorSerialInput.setValueState(sValueState);
+
+            if (bAnswered) {
+                let oEntry = {};
+                oEntry.Delivery = oDeliveryData.DeliveryDocument;
+                oEntry.DeliveryPosnr = oDeliveryData.DeliveryPosition;
+                oEntry.OpenQty = oDeliveryData.OpenQuantity;
+                oEntry.EquipmentID = oDeliveryData.EquipmentID === '1' ? '' : oDeliveryData.EquipmentID;
+                oEntry.BulkUnique = oDeliveryData.BulkDelivery ? "0" : "1";
+                oEntry.classnum = "";
+                oEntry.charact = "SERGE"
+                oEntry.AnswerValue = oVendorSerialInput.getValue();
+                oEntry.bktxt = formatName(sFirstName, sLastName);
+
+                if (this.getModel("objectView").getProperty("/serialFlex")) {
+                    oEntry.SerialNumber = this.getModel("objectView").getProperty("/newSerialnumber");
+                }
+
+                this.aNewEntries.push(oEntry);
+            } else {
+                bAllAnswered = false;
+            }
+
+            return bAllAnswered;
+        },
+
+        addLicensePlateNumberAndVIN: function (bAllAnswered) {
+            const oUserInfo = sap.ushell.Container.getService("UserInfo");
+            const sFirstName = oUserInfo.getUser().getFirstName();
+            const sLastName = oUserInfo.getUser().getLastName();
+
+            const oDeliveryData = this.getView().getBindingContext().getObject();
+
+            const serialNumber = this.getModel("objectView").getProperty("/serialFlex") ? this.getModel("objectView").getProperty("/newSerialnumber") : undefined;
+
+            const oLicensePlateInput = this.byId("licensePlateInput");
+            const oVINInput = this.byId("vinInput");
+
+            this.aNewEntries.push({
+                Delivery: oDeliveryData.DeliveryDocument,
+                DeliveryPosnr: oDeliveryData.DeliveryPosition,
+                OpenQty: oDeliveryData.OpenQuantity,
+                EquipmentID: oDeliveryData.EquipmentID === '1' ? '' : oDeliveryData.EquipmentID,
+                charact: "K0127",
+                AnswerValue: oLicensePlateInput.getValue(), // licenseplate control
+                bktxt: formatName(sFirstName, sLastName),
+                SerialNumber: serialNumber
+            });
+
+            this.aNewEntries.push({
+                Delivery: oDeliveryData.DeliveryDocument,
+                DeliveryPosnr: oDeliveryData.DeliveryPosition,
+                OpenQty: oDeliveryData.OpenQuantity,
+                EquipmentID: oDeliveryData.EquipmentID === '1' ? '' : oDeliveryData.EquipmentID,
+                charact: "K0128",
+                AnswerValue: oVINInput.getValue(), // vin control
+                bktxt: formatName(sFirstName, sLastName),
+                SerialNumber: serialNumber
+            });
+
+            return bAllAnswered;
+        },
+
+        addQuantityAnswer: function (bAllAnswered) {
+            const oUserInfo = sap.ushell.Container.getService("UserInfo");
+            const sFirstName = oUserInfo.getUser().getFirstName();
+            const sLastName = oUserInfo.getUser().getLastName();
+
+            let bAnswered = true;
+            const oDeliveryData = this.getView().getBindingContext().getObject();
+
+            if (!oDeliveryData.BulkDelivery) {
+                return bAllAnswered;
+            }
+
+            let sValueState = "None";
+            const oQuantityInput = this.byId("inpQuantity");
+
+            if (oQuantityInput.getValue() === "") {
+                sValueState = "Error";
+                bAnswered = false;
+            }
+            oQuantityInput.setValueState(sValueState);
+
+            if (bAnswered) {
+                let oEntry = {};
+                oEntry.Delivery = oDeliveryData.DeliveryDocument;
+                oEntry.DeliveryPosnr = oDeliveryData.DeliveryPosition;
+                oEntry.OpenQty = oDeliveryData.OpenQuantity;
+                oEntry.EquipmentID = oDeliveryData.EquipmentID === '1' ? '' : oDeliveryData.EquipmentID;
+                oEntry.BulkUnique = oDeliveryData.BulkDelivery ? "0" : "1";
+                oEntry.classnum = "";
+                oEntry.charact = "WEMNG"
+                oEntry.AnswerValue = oQuantityInput.getValue();
+                oEntry.bktxt = formatName(sFirstName, sLastName);
+
+                if (this.getModel("objectView").getProperty("/serialFlex")) {
+                    oEntry.SerialNumber = this.getModel("objectView").getProperty("/newSerialnumber");
+                }
+
+                this.aNewEntries.push(oEntry);
+            } else {
+                bAllAnswered = false;
+            }
+
+            return bAllAnswered;
+        },
+
+        composedItemsRelevant: function () {
+            let bRelevant = false;
+
+            if (this.getModel("objectView").getProperty("/composedItems")) {
+                bRelevant = true;
+            }
+            return bRelevant;
+        },
+
+        composedItemsAnswered: function (bAllAnswered) {
+            if (!this.composedItemsRelevant()) {
+                return bAllAnswered;
+            }
+
+            // check that all subitems have been handled
+            const aListCompItem = this.byId("compItemsTable").getItems();
+
+            for (let oListCompItem of aListCompItem) {
+                let sSalesOrderPosition = oListCompItem.getBindingContext().getProperty("SalesOrderPosition");
+
+                if (!this.oComposedItemDialogController.oAnswers[sSalesOrderPosition]) {
+                    oListCompItem.setHighlight("Error");
+                    bAllAnswered = false;
+                } else {
+                    oListCompItem.setHighlight("None");
+                }
+            }
+
+            return bAllAnswered;
+        },
+
+        composedItemsDeviations: function (bDeviation) {
+            if (!this.composedItemsRelevant()) {
+                return bDeviation;
+            }
+
+            // check that all subitems have been handled
+            const aListCompItem = this.byId("compItemsTable").getItems();
+
+            for (let oListCompItem of aListCompItem) {
+                let sSalesOrderPosition = oListCompItem.getBindingContext().getProperty("SalesOrderPosition");
+
+                if (this.oComposedItemDialogController.oAnswers[sSalesOrderPosition] &&
+                    this.oComposedItemDialogController.oAnswers[sSalesOrderPosition].deviations) {
+                    bDeviation = true;
+                }
+            }
+
+            // add compItem answers to the odata model
+            return bDeviation;
+        },
+
+        composedItemsDeviationsText: function (sDeviationText) {
+            if (!this.composedItemsRelevant()) {
+                return sDeviationText;
+            }
+
+            let sCompDeviationText = "";
+
+            // check that all subitems have been handled
+            const aListCompItem = this.byId("compItemsTable").getItems();
+
+            for (let oListCompItem of aListCompItem) {
+                let sSalesOrderPosition = oListCompItem.getBindingContext().getProperty("SalesOrderPosition");
+
+                if (this.oComposedItemDialogController.oAnswers[sSalesOrderPosition] &&
+                    this.oComposedItemDialogController.oAnswers[sSalesOrderPosition].deviations) {
+                    sCompDeviationText += this.oComposedItemDialogController.oAnswers[sSalesOrderPosition].deviationText;
+                }
+            }
+
+            // add compItem deviations text to the rest
+            sDeviationText += "\n \n" + sCompDeviationText;
+            return sDeviationText;
+        },
+
+        addComposedItemsAnswers: function () {
+            if (!this.composedItemsRelevant()) {
+                return;
+            }
+
+            const aListCompItem = this.byId("compItemsTable").getItems();
+
+            // itererate over all composed items
+            for (let oListCompItem of aListCompItem) {
+                let sSalesOrderPosition = oListCompItem.getBindingContext().getProperty("SalesOrderPosition");
+
+                let aAnswers = this.oComposedItemDialogController.oAnswers[sSalesOrderPosition].answers;
+
+                // add all answers of this composedItem 
+                for (let oAnswer of aAnswers) {
+                    this.aNewEntries.push(oAnswer);
+                }
+            }
+        },
+
+        onOpenNotifDialog: function () {
+            if (!this.notifDialog) {
+                this.notifDialog = this.loadFragment({
+                    name: "eu.aiden.ga.goodsacceptance.fragments.NotificationDialog"
+                });
+            }
+
+            this.notifDialog.then((oDialog) =>
+                this.openNotifDialog(oDialog)
+            );
+        },
+
+        openNotifDialog: function (oDialog) {
+            // this.byId("deviationLongtext").setValue("");
+            this.byId("deviationLongtext").setValue(this.sNotifText);
+            oDialog.open();
+        },
+
+        onCloseNotifDialog: function () {
+            const sDeviationText = this.byId("deviationLongtext").getValue();
+            this.byId("notifDialog").close();
+
+            this.createNotification(sDeviationText);
+
+
+            // call Function Notification aanmaken
+            // this.saveAnswers();
+        },
+
+        notifDialogEscapeHndlr: function (pEscapePending) {
+            pEscapePending.reject();
+        },
+
+        onOpenComposedItemDialog: function (oEvent) {
+            const sBindingPath = oEvent.getSource().getBindingContext().getPath();
+
+            this.oComposedItemDialogController.openDialog(sBindingPath);
+        },
+
+        onCloseComposedItemDialog(oEvent) {
+            const sPath = this.composedItemDialog.getBindingContext().getPath(),
+                oModel = this.getModel();
+
+            oModel.setProperty(sPath + "/QuestionStatus", "Success");
+
+            this.composedItemDialog.close();
+        },
+
+        saveAnswers: function () {
+            this.getModel().setUseBatch(true);
+
+            let oModel = this.getModel(),
+                that = this;
+
+            this.addComposedItemsAnswers();
+
+            console.log(this.aNewEntries);
+
+            this.aNewEntries.forEach(function (oNewEntry) {
+                oModel.createEntry('/AnswerSet', {
+                    // groupId: "answerGroup",
+                    properties: oNewEntry
+                });
+                // oModel.createEntry("/AnswerSet", oNewEntry);
+            });
+
+            const oQuantityInput = this.byId("inpQuantity");
+            const sQuantityValue = parseInt(oQuantityInput.getValue());
+
+            if (oModel.hasPendingChanges()) {
+                console.log("pending changes");
+                // oModel.setUseBatch(true);
+                that.getView().setBusy(true);
+                oModel.submitChanges({
+                    // groupId: "answerGroup",
+                    success: function (oData, response) {
+                        that.getView().setBusy(false);
+                        // oModel.setUseBatch(false);
+
+                        // MessageToast.show(this.getResourceBundle().getText("msgAnswersSaved"));
+
+                        const newOpenQuantity = sQuantityValue ? that.getView().getBindingContext().getProperty("OpenQuantity") - sQuantityValue : that.getView().getBindingContext().getProperty("OpenQuantity") - 1;
+
+                        // console.log(newOpenQuantity);
+              
+
+                        // return;
+
+                        // if (newOpenQuantity <= 0) {
+                        //     // this.getModel("objectView").setProperty("/transferFlexAnswers", false);
+                        //     // this.onNavBack(true);
+                        //     // this.getRouter().navTo("worklist", {}, true);
+                        //     // that.getRouter().navTo("worklist");
+                        //     // history.go(-2);
+                        //     // history.back();
+
+                        //     this.getRouter().navTo("worklist", {}, true);
+                        // } else {
+                        //     // this.getModel("objectView").setProperty("/transferFlexAnswers", true);
+                        //     this.refreshEntry();
+                        //     that.getView().getModel().refresh();
+                        //     // this.getModel().refresh();
+                        //     // location.reload();
+                        // }
+
+                        // that.getView().setBusy(false);
+
+                        if (oData.__batchResponses) {
+                            if (oData.__batchResponses[0].__changeResponses) {
+                                let iNumberOfLines = oData.__batchResponses[0].__changeResponses.length;
+                                if (iNumberOfLines !== 0) {
+                                    // let sMessage = JSON.parse(oData.__batchResponses[0].__changeResponses[0].headers["sap-message"]).message;
+                                    MessageToast.show(this.getResourceBundle().getText("msgAnswersSaved"));
+
+                                    // if (oViewData.serialFlex) {
+                                    if (newOpenQuantity <= 0) {
+                                        this.getModel("objectView").setProperty("/transferFlexAnswers", false);
+                                        // this.onNavBack(true);
+                                        // this.getRouter().navTo("worklist", {}, true);
+                                        // this.getRouter().navTo("worklist");
+                                        // history.go(-1);
+                                        this.getRouter().navTo("worklist", {}, true);
+                                    } else {
+                                        this.getModel("objectView").setProperty("/transferFlexAnswers", true);
+                                        this.refreshEntry();
+                                        that.getView().getModel().refresh();
+                                        // this.getModel().refresh();
+                                        // location.reload();
+                                    }
+                                    // } else {
+                                    //     console.log("nav back on no serial flex");
+                                    //     this.onNavBack(true);
+                                    // }
+                                }
+                            } else if (oData.__batchResponses[0].response) {
+                                // let sErrorMessage = JSON.parse(oData.__batchResponses[0].response.body).error.message.value;
+                                // MessageBox.error(sErrorMessage);
+                                this.getRouter().navTo("worklist", {}, true);
+                            }
+                        }
+
+                    }.bind(this),
+                    error: function (oError) {
+                        // oModel.setUseBatch(false);
+                        console.log(oError);
+                        that.getView().setBusy(false);
+                        that.removeAnswersFromModel();
+                    }.bind(this)
+                });
+
+                // if (newOpenQuantity <= 0) {
+                //     // this.getModel("objectView").setProperty("/transferFlexAnswers", false);
+                //     // this.onNavBack(true);
+                //     // this.getRouter().navTo("worklist", {}, true);
+                //     // that.getRouter().navTo("worklist");
+                //     // history.go(-2);
+                //     // history.back();
+
+                //     this.getRouter().navTo("worklist", {}, true);
+                // } else {
+                //     // this.getModel("objectView").setProperty("/transferFlexAnswers", true);
+                //     this.refreshEntry();
+                //     that.getView().getModel().refresh();
+                //     // this.getModel().refresh();
+                //     // location.reload();
+                // }
+            } else {
+                console.log("no pending changes");
+            }
+        },
+
+        removeAnswersFromModel: function () {
+            // remove all created answer entries from model. They will be re-created when pressing the save button again.
+            // otherwise each answer will be duplicated on the next attempt to save when a technical error has occurred
+            let oModel = this.getModel();
+            let oChanges = oModel.getPendingChanges();
+            let aChangePaths = [];
+            for (const sEntryPath in oChanges) {
+                if (sEntryPath.search("AnswerSet") !== -1) {
+                    aChangePaths.push("/" + sEntryPath);
+                    ("removed answer: " + sEntryPath);
+                }
+            }
+
+            oModel.resetChanges(aChangePaths);
+        },
+
+        _onObjectMatched: function (oEvent) {
+            let sObjectId = oEvent.getParameter("arguments").objectId;
+            this._bindView("/ZOPEN_DELIVERY_OVERVIEW_GA" + sObjectId);
+        },
+
+        _bindView: function (sObjectPath) {
+            let oViewModel = this.getModel("objectView");
+
+            this.getView().bindElement({
+                path: sObjectPath,
+                parameters: {
+                    expand: 'to_MamoCharact/to_Answers,to_MamoCharact/to_AnswersDisplay,to_ComposedItems'
+                },
+                events: {
+                    change: this._onBindingChange.bind(this),
+                    dataRequested: function () {
+                        oViewModel.setProperty("/busy", true);
+                    },
+                    dataReceived: function (oEvent) {
+                        oViewModel.setProperty("/busy", false);
+                        this.determineFlexScenario();
+                    }.bind(this)
+                }
+            });
+        },
+
+        _onBindingChange: function () {
+            this.determineFlexScenario();
+
+            let oView = this.getView(),
+                oViewModel = this.getModel("objectView"),
+                oElementBinding = oView.getElementBinding();
+
+            // No data for the binding
+            if (!oElementBinding.getBoundContext()) {
+                this.getRouter().getTargets().display("objectNotFound");
+                return;
+            }
+
+
+            let bComposedItems = false;
+            if (this.byId("compItemsTable").getItems().length > 0) {
+                bComposedItems = true;
+            }
+            this.getModel("objectView").setProperty("/composedItems", bComposedItems);
+            let oPage = this.byId("page");
+            if (bComposedItems) {
+                oPage.setSelectedSection("sectionComposedItems");
+            } else {
+                oPage.setSelectedSection("sectionSerialnumber");
+            }
+
+            let oResourceBundle = this.getResourceBundle(),
+                oObject = oView.getBindingContext().getObject(),
+                sObjectId = oObject.SerialNumber,
+                sObjectName = oObject.ZOPEN_DELIVERY_OVERVIEW_GA;
+
+            oViewModel.setProperty("/busy", false);
+            oViewModel.setProperty("/shareSendEmailSubject",
+                oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
+            oViewModel.setProperty("/shareSendEmailMessage",
+                oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
+        },
+
+        refreshEntry: async function () {
+            //reload all view data to get actual Quantity values
+            this.getView().getElementBinding().refresh();
+
+            // reset question lines to default
+            this.byId("questionTableMain").updateAggregation("items");
+
+            // reset serialnumber
+            this.determineFlexScenario()
+
+        },
+
+        determineFlexScenario: function () {
+            let oViewModel = this.getModel("objectView");
+            const context = this.getView().getBindingContext();
+
+            if (!context) {
+                return
+            };
+
+            let oObject = context.getObject();
+
+            const BulkDelivery = this.getView().getBindingContext().getProperty("BulkDelivery");
+
+            oViewModel.setProperty("/serialFlex", !BulkDelivery);
+            // reset serialnumber
+            oViewModel.setProperty("/serialValid", false);
+            oViewModel.setProperty("/serialState", 'None');
+            oViewModel.setProperty("/newSerialnumber", '');
+            oViewModel.setProperty("/vendorSerialValid", false);
+            oViewModel.setProperty("/vendorSerialState", 'None');
+            oViewModel.setProperty("/vendorSerialnumber", '');
+            oViewModel.setProperty("/licensePlate", '');
+            oViewModel.setProperty("/licensePlateValid", false);
+            oViewModel.setProperty("/licensePlateState", 'None');
+            oViewModel.setProperty("/vin", '');
+            oViewModel.setProperty("/vinValid", false);
+            oViewModel.setProperty("/vinState", 'None');
+            oViewModel.setProperty("/quantityValid", false);
+            oViewModel.setProperty("/openQuantity", oObject.OpenQuantity);
+
+            this.byId("inpQuantity").setValue("");
+            this.byId("inpQuantity").setValueState("None");
+        },
+
+        validateSerialnumber: async function () {
+            const oSerialInput = this.byId("serialInput");
+
+            let oObject = this.getView().getBindingContext().getObject();
+            return new Promise((resolve, reject) => {
+                if (oSerialInput.getBusy()) {
+                    resolve();
+                    return;
+                } else {
+                    oSerialInput.setBusy(true);
+                }
+
+                this.getModel().callFunction("/ValidateSerialnumber", {
+                    method: "GET",
+                    urlParameters: {
+                        Delivery: oObject.DeliveryDocument,
+                        DeliveryPosnr: oObject.DeliveryPosition,
+                        ComposedItemPosnr: "",
+                        SerialNumber: this.getModel("objectView").getProperty("/newSerialnumber")
+                    },
+                    success: function (oData, response) {
+                        oSerialInput.setBusy(false);
+                        let oModel = this.getModel("objectView");
+                        if (!oData.Valid) {
+                            // MessageBox.warning(oData.Reason, {
+                            //     title: this.getResourceBundle().getText("msgInvalidSerialNumber")
+                            // });
+
+                            const oHeader = new Bar({
+                                contentLeft: [
+                                    new Icon({
+                                        src: "sap-icon://message-warning",
+                                        // make it red-colored like the MessageBox warning
+                                        // color: "sapUiIconColorCritical",
+                                        color: "orange",
+                                        size: "1.25rem"
+                                    })
+                                ],
+                                contentMiddle: [
+                                    new Title({ text: this.getResourceBundle().getText("msgInvalidSerialNumber") })
+                                ]
+                            });
+
+                            if (!this._oSerialDialog) {
+
+                                this._oSerialDialog = new Dialog({
+                                    customHeader: oHeader,
+                                    contentWidth: "30rem",
+                                    title: this.getResourceBundle().getText("msgInvalidSerialNumber"),
+                                    content: [
+                                        new Panel({
+                                            content: [
+                                                new Text({ text: oData.Reason })
+                                            ]
+                                        }).addStyleClass("sapUiContentPadding")
+                                    ],
+                                    endButton: new Button({
+                                        text: this.getResourceBundle().getText("lblCorrectInput"),
+                                        press: function () {
+                                            this._oSerialDialog.close();
+                                        }.bind(this)
+                                    }),
+                                    beginButton: new Button({
+                                        text: this.getResourceBundle().getText("lblCreateIncidentSN"),
+                                        type: ButtonType.Emphasized,
+                                        press: function () {
+                                            this._oSerialDialog.close();
+                                            this.onIncidentType06();
+                                        }.bind(this)
+                                    })
+                                });
+                                // make sure it is destroyed with the view
+                                this.getView().addDependent(this._oSerialDialog);
+                            }
+
+                            this._oSerialDialog.open();
+
+                            oModel.setProperty("/serialState", "Error");
+                        } else {
+                            oModel.setProperty("/serialState", "Success");
+                        }
+
+
+
+                        oModel.setProperty("/serialValid", oData.Valid);
+                        resolve();
+                    }.bind(this),
+                    error: function (oError) {
+                        oSerialInput.setBusy(false);
+                    }.bind(this)
+                });
+
+            })
+        },
+
+        onNoSupplierSerialNumber: function () {
+            this.byId("vendorSerialInput").setValue("N/A");
+            this.validateVendorSerialnumber();
+        },
+
+        validateVendorSerialnumber: function () {
+            const oModel = this.getModel("objectView");
+            const oDeliveryData = this.getView().getBindingContext().getObject();
+            const sSerial = oModel.getProperty("/newSerialnumber");
+            const sMaterial = oDeliveryData.MaterialNumber;
+            const sSubgroup = oDeliveryData.SubGroup;
+            const sVendorSerial = oModel.getProperty("/vendorSerialnumber");
+            const sSupplierSerialnumber = oDeliveryData.SupplierSerialnumber;
+
+            oModel.setProperty("/vendorSerialValidLichn", false);
+            oModel.setProperty("/vendorSerialValidComparison", false);
+
+            console.log(oDeliveryData);
+            console.log(sMaterial, sSubgroup);
+
+            let bValid = true,
+                sState = "Success";
+
+            if (!oDeliveryData.DeliveryDocument || oDeliveryData.BulkDelivery) {
+                return bValid;
+            }
+
+            if (oDeliveryData.BulkDelivery) {
+                return bValid;
+            }
+
+            if (sVendorSerial === sSerial || sVendorSerial === "") {
+                bValid = false;
+                sState = "Error";
+
                 MessageBox.warning(
-                  that
-                    .getResourceBundle()
-                    .getText("msgReceiptCompletedAcceptanceOpen"),
-                  {
-                    title: that
-                      .getResourceBundle()
-                      .getText("msgGoodsReceiptPosted"),
-                    onClose: () => {
-                      history.go(-1);
-                      // that.getModel().refresh();
+                    this.getResourceBundle().getText("msgInvalidSupplierSerialNumber"), {
+                });
+
+                oModel.setProperty("/vendorSerialState", sState);
+                oModel.setProperty("/vendorSerialValid", bValid)
+                console.log("empty vendor serial number")
+                return bValid;
+            }
+
+
+            const minimumLength = 4;
+
+            if (sVendorSerial.length < minimumLength && sVendorSerial != "N/A") {
+                bValid = false;
+                sState = "Error";
+
+                MessageBox.warning(
+                    this.getResourceBundle().getText("msgInvalidSupplierSerialNumber"), {
+                });
+
+                oModel.setProperty("/vendorSerialState", sState);
+                oModel.setProperty("/vendorSerialValid", bValid)
+                console.log("invalid length for vendor serial number");
+                return bValid;
+            }
+
+            if (sSubgroup.includes(sVendorSerial)) {
+                bValid = false;
+                sState = "Error";
+
+                MessageBox.warning(
+                    this.getResourceBundle().getText("msgInvalidSupplierSerialNumber"), {
+                });
+
+                oModel.setProperty("/vendorSerialState", sState);
+                oModel.setProperty("/vendorSerialValid", bValid);
+                console.log("vendor serial number contains subgroup")
+                return bValid;
+            }
+
+            if (sVendorSerial.length >= 8 && sMaterial.includes(sVendorSerial)) {
+                bValid = false;
+                sState = "Error";
+
+                MessageBox.warning(
+                    this.getResourceBundle().getText("msgInvalidSupplierSerialNumber"), {
+                });
+
+                oModel.setProperty("/vendorSerialState", sState);
+                oModel.setProperty("/vendorSerialValid", bValid);
+                console.log("vendor serial number contains material or material group");
+                return bValid;
+            }
+
+            if (sVendorSerial.includes("qr.group.boels.com")) {
+                bValid = false;
+                sState = "Error";
+
+                MessageBox.warning(
+                    this.getResourceBundle().getText("msgInvalidSupplierSerialNumber"), {
+                });
+
+                oModel.setProperty("/vendorSerialState", sState);
+                oModel.setProperty("/vendorSerialValid", bValid);
+                console.log("vendor serial number contains qr code prefix")
+                return bValid;
+            }
+
+            if (sSupplierSerialnumber != "" && sSupplierSerialnumber != sVendorSerial) {
+                bValid = false;
+                sState = "Error";
+
+                MessageBox.warning(
+                    this.getResourceBundle().getText("msgInvalidSupplierBatch"), {
+                });
+
+                oModel.setProperty("/vendorSerialState", sState);
+                oModel.setProperty("/vendorSerialValid", bValid)
+                return bValid;
+            }
+
+            oModel.setProperty("/vendorSerialState", sState);
+            oModel.setProperty("/vendorSerialValid", bValid)
+            return bValid;
+        },
+
+        validateVIN: function () {
+            const oModel = this.getModel("objectView");
+            const sVIN = oModel.getProperty("/vin");
+
+            let bValid = true;
+            let sState = "Success";
+            let sReason = "";
+
+            // Check length first (must be exactly 17 characters)
+            if (sVIN.length !== 17) {
+                bValid = false;
+                sState = "Error";
+                sReason = this.getResourceBundle().getText("msgVINInvalidLength");
+            }
+            // Only check for forbidden characters if length is correct
+            else {
+                const forbiddenChars = /[IOQ]/i;
+                if (forbiddenChars.test(sVIN)) {
+                    bValid = false;
+                    sState = "Error";
+                    sReason = this.getResourceBundle().getText("msgVINInvalidChars");
+                }
+            }
+
+            if (!bValid) {
+                // Destroy old dialog if it exists to ensure fresh content
+                if (this._oVINDialog) {
+                    this._oVINDialog.destroy();
+                    this._oVINDialog = null;
+                }
+
+                const oHeader = new Bar({
+                    contentLeft: [
+                        new Icon({
+                            src: "sap-icon://message-warning",
+                            color: "orange",
+                            size: "1.25rem"
+                        })
+                    ],
+                    contentMiddle: [
+                        new Title({ text: this.getResourceBundle().getText("msgInvalidVIN") })
+                    ]
+                });
+
+                this._oVINDialog = new Dialog({
+                    customHeader: oHeader,
+                    title: this.getResourceBundle().getText("msgInvalidVIN"),
+                    content: [
+                        new Panel({
+                            content: [
+                                new Text({ text: sReason })
+                            ]
+                        }).addStyleClass("sapUiContentPadding")
+                    ],
+                    endButton: new Button({
+                        text: this.getResourceBundle().getText("lblCorrectInput"),
+                        press: function () {
+                            this._oVINDialog.close();
+                        }.bind(this)
+                    }),
+                    beginButton: new Button({
+                        text: this.getResourceBundle().getText("lblCreateIncidentVIN"),
+                        type: ButtonType.Emphasized,
+                        press: function () {
+                            this._oVINDialog.close();
+                            this.onIncidentType13();
+                        }.bind(this)
+                    })
+                });
+                this.getView().addDependent(this._oVINDialog);
+
+                this._oVINDialog.open();
+            }
+
+            oModel.setProperty("/vinState", sState);
+            oModel.setProperty("/vinValid", bValid);
+
+            return bValid;
+        },
+
+        validateLicensePlate: async function () {
+            const oLicensePlateInput = this.byId("licensePlateInput");
+            const oModel = this.getModel("objectView");
+            let sLicensePlate = oModel.getProperty("/licensePlate");
+
+            // Convert to uppercase
+            if (sLicensePlate) {
+                sLicensePlate = sLicensePlate.toUpperCase();
+                oModel.setProperty("/licensePlate", sLicensePlate);
+            }
+
+            // Skip validation if input is empty
+            if (!sLicensePlate || sLicensePlate.trim() === "") {
+                oModel.setProperty("/licensePlateState", "None");
+                oModel.setProperty("/licensePlateValid", false);
+                return;
+            }
+
+            const oObject = this.getView().getBindingContext().getObject();
+
+            return new Promise((resolve, reject) => {
+                if (oLicensePlateInput.getBusy()) {
+                    resolve();
+                    return;
+                } else {
+                    oLicensePlateInput.setBusy(true);
+                }
+
+                this.getModel().callFunction("/ValidateLicensePlate", {
+                    method: "GET",
+                    urlParameters: {
+                        Delivery: oObject.DeliveryDocument,
+                        DeliveryPosnr: oObject.DeliveryPosition,
+                        ComposedItemPosnr: "",
+                        LicensePlate: sLicensePlate,
+                        Depot: oObject.Depot
                     },
-                  },
-                );
-              } else {
-                //groen
-                MessageBox.success(
-                  that
-                    .getResourceBundle()
-                    .getText("msgReceiptCompleted"),
-                  {
-                    title: that
-                      .getResourceBundle()
-                      .getText("msgGoodsReceiptPosted"),
-                    onClose: () => {
-                      // that.getView().getModel().refresh();
-                      history.go(-1);
-                    },
-                  },
-                );
-              }
-            },
-            error: function () {
-              source.setBusy(false);
-              MessageBox.error("Error storing record");
-            },
-          });
+              
+                    success: function (oData, response) {
+                        oLicensePlateInput.setBusy(false);
+
+                        if (!oData.Valid) {
+                            const oHeader = new Bar({
+                                contentLeft: [
+                                    new Icon({
+                                        src: "sap-icon://message-warning",
+                                        color: "orange",
+                                        size: "1.25rem"
+                                    })
+                                ],
+                                contentMiddle: [
+                                    new Title({ text: this.getResourceBundle().getText("msgInvalidLicensePlate") })
+                                ]
+                            });
+
+                            if (this._oLicensePlateDialog) {
+                                this._oLicensePlateDialog.destroy();
+                                this._oLicensePlateDialog = null;
+                            }
+
+                            this._oLicensePlateDialog = new Dialog({
+                                customHeader: oHeader,
+                                title: this.getResourceBundle().getText("msgInvalidLicensePlate"),
+                                content: [
+                                    new Panel({
+                                        content: [
+                                            new Text({ text: oData.Reason })
+                                        ]
+                                    }).addStyleClass("sapUiContentPadding")
+                                ],
+                                endButton: new Button({
+                                    text: this.getResourceBundle().getText("lblCorrectInput"),
+                                    press: function () {
+                                        this._oLicensePlateDialog.close();
+                                    }.bind(this)
+                                })
+                            });
+                            this.getView().addDependent(this._oLicensePlateDialog);
+
+                            this._oLicensePlateDialog.open();
+
+                            oModel.setProperty("/licensePlateState", "Error");
+                        } else {
+                            oModel.setProperty("/licensePlateState", "Success");
+                        }
+
+                        oModel.setProperty("/licensePlateValid", oData.Valid);
+                        resolve();
+                    }.bind(this),
+                    error: function (oError) {
+                        oLicensePlateInput.setBusy(false);
+                        oModel.setProperty("/licensePlateState", "Error");
+                        oModel.setProperty("/licensePlateValid", false);
+                        resolve();
+                    }.bind(this)
+                });
+            });
+        },
+
+        validateQuantity: function () {
+            const oObject = this.getView().getBindingContext().getObject();
+            const sOpenQuantity = parseInt(oObject.OpenQuantity);
+            let bValid = true;
+
+            if (!oObject.BulkDelivery) {
+                return bValid;
+            }
+
+            let sValueState = "None";
+            const oQuantityInput = this.byId("inpQuantity");
+            const oQuantityInputIcon = this.byId("inpQuantityIcon");
+            const sQuantityValue = parseInt(oQuantityInput.getValue());
+
+            if (sQuantityValue > sOpenQuantity) {
+                bValid = false;
+            }
+            if (sQuantityValue === 0) {
+                bValid = false;
+            }
+            if (sQuantityValue < 0) {
+                bValid = false;
+            }
+
+            if (!bValid) {
+                sValueState = "Error";
+            }
+            oQuantityInput.setValueState(sValueState);
+            oQuantityInputIcon.setSrc(formatter.validStatusIcon(bValid));
+            oQuantityInputIcon.setColor(formatter.validStatusColor(bValid));
+            this.getModel("objectView").setProperty("/quantityValid", bValid);
+            return bValid;
+        },
+
+        transferFlexAnswers: function () {
+            let oObject = this.getView().getBindingContext().getObject();
+
+            ("Start TransferFlexAnswersToGa")
+
+            this.getModel().callFunction("/TransferFlexAnswersToGa", {
+                method: "GET",
+                urlParameters: {
+                    Delivery: oObject.DeliveryDocument,
+                    DeliveryPosnr: oObject.DeliveryPosition
+                },
+                success: function (oData, response) {
+                    oData.Success ? console.log("TransferFlexAnswersToGa Success") : console.log("TransferFlexAnswersToGa Failed");
+                }.bind(this),
+            });
+
         }
-      },
-
-      showNotifConfirmDialog(oOptions) {
-        // const oOptions = {
-        //     switchCtrl: oEvent.getSource(),
-        //     oldState: !oEvent.getParameter("state"),
-        //     confirmCallback: this.createPackingSlipNotif,
-        //     title: this.getResourceBundle.getText("notifCreateConfirmTitle");
-        // }
-        oOptions.confirmCallback.bind(this);
-
-        if (!this.oNotifConfirmDialog) {
-          this.oNotifConfirmDialog = new Dialog({
-            type: "Message",
-            title: "Confirm",
-            content: new Text({
-              text: this.getResourceBundle().getText("notifConfirmDialogText"),
-            }),
-            beginButton: new Button({
-              type: "Emphasized",
-              text: this.getResourceBundle().getText(
-                "notifConfirmContinueText",
-              ),
-              press: function () {
-                oOptions.confirmCallback(this);
-                // this.createPackingSlipNotif();
-                this.oNotifConfirmDialog.close();
-              }.bind(this),
-            }),
-            endButton: new Button({
-              text: this.getResourceBundle().getText("notifConfirmCancelText"),
-              press: function () {
-                oOptions.switchCtrl.setState(oOptions.oldState);
-                this.oNotifConfirmDialog.close();
-              }.bind(this),
-            }),
-          });
-        }
-
-        this.oNotifConfirmDialog.setTitle(oOptions.title);
-        this.oNotifConfirmDialog.open();
-      },
-
-      onDamage: function (oEvent) {
-        const oOptions = {
-          switchCtrl: oEvent.getSource(),
-          oldState: !oEvent.getParameter("state"),
-          confirmCallback: this.createDamageNotif,
-          title: this.getResourceBundle().getText("notifCreateConfirmTitle"),
-        };
-
-        if (
-          this.getView().byId("_val25").getState() === true ||
-          this.getView().byId("sw02").getState() === true
-        ) {
-          this.showNotifConfirmDialog(oOptions);
-        }
-      },
-
-      onPressTopdesk: function (oEvent) {
-        const url = oEvent.getSource().getBindingContext().getProperty("URL")
-
-        if (url) {
-          window.open(url, "_blank");
-        }
-      },
-
-      createDamageNotif: function (oController) {
-        const that = oController;
-        const oDataModel = that.getOwnerComponent().getModel();
-        oDataModel.setUseBatch(false);
-        oDataModel.callFunction("/SetDamage", {
-          method: "POST",
-          urlParameters: {
-            Delivery: that.getView().byId("_val20").getText(),
-            Position: that.getView().byId("_val26").getText(),
-            Depot: that.getView().byId("oa1").getText(),
-          },
-          success: function (oData, response) {
-            MessageToast.show(response.data.SetDamage.Text);
-            oDataModel.refresh();
-          },
-          error: function (oError) { },
-        });
-      },
-
-      onIncidentType2: function (oEvent) {
-        const that = this;
-        this.incidentType2Dialog =
-          this.createTopdeskDialog(
-            "topdeskPackingSlipDialog",
-            "02",
-            () => {
-              const model = that.getModel();
-              model.refresh();
-            },
-            () => {
-              // that.byId("_val24").setState(true);
-            },
-          );
-        this.incidentType2Dialog.open();
-      },
-
-      onIncidentType3: function (oEvent) {
-        const that = this;
-        this.incidentType3Dialog =
-          this.createTopdeskDialog(
-            "topdeskIncidentType3",
-            "03",
-            () => {
-              const model = that.getModel();
-              model.refresh();
-            },
-            () => { },
-          );
-        this.incidentType3Dialog.open();
-      },
-
-      onIncidentType4: function (oEvent) {
-        const that = this;
-        this.incidentType4Dialog =
-          this.createTopdeskDialog(
-            "topdeskIncidentType4",
-            "04",
-            () => {
-              const model = that.getModel();
-              model.refresh();
-            },
-            () => { },
-          );
-        this.incidentType4Dialog.open();
-      },
-
-      validateInput: function () {
-        const inputQuantity = this.getView().byId("_val23").getValue();
-        const openQuantity = this.getView().byId("openqty_chk").getText();
-
-        if (inputQuantity <= 0) {
-          this.getView().byId("_val23").setValueState("Error");
-          MessageToast.show(this.getResourceBundle().getText("NotifReceivedQty"));
-          return false;
-        }
-
-        if (parseInt(inputQuantity) > parseInt(openQuantity)) {
-          this.getView().byId("_val23").setValueState("Error");
-          MessageToast.show("Open quantity more than received quantity");
-          return false;
-        } else {
-          this.getView().byId("_val23").setValueState("None");
-          return true;
-        }
-      },
-
-      async onOpenDialogPS() {
-        this.oDialogPS ??= await this.loadFragment({
-          name: "zxpapap0001a.fragments.NotifPopupPackingSlip",
-        });
-
-        this.oDialogPS.open();
-      },
-
-      onCloseDialogPS() {
-        // note: We don't need to chain to the pDialog promise, since this event-handler
-        // is only called from within the loaded dialog itself.
-        this.byId("notifDialogPS").close();
-      },
-      async onOpenDialogDamage() {
-        this.oDialogDMG ??= await this.loadFragment({
-          name: "zxpapap0001a.fragments.NotifPopupDamage",
-        });
-
-        this.oDialogDMG.open();
-      },
-
-      onCloseDialogDamage() {
-        // note: We don't need to chain to the pDialog promise, since this event-handler
-        // is only called from within the loaded dialog itself.
-        this.byId("notifDialogDamage").close();
-      },
-
-      _onBindingChange: function () {
-        this.showHideComposedItems();
-
-        var oView = this.getView(),
-          oViewModel = this.getModel("objectView"),
-          oElementBinding = oView.getElementBinding();
-
-        // No data for the binding
-        if (!oElementBinding.getBoundContext()) {
-          this.getRouter().getTargets().display("objectNotFound");
-          return;
-        }
-
-        var oResourceBundle = this.getResourceBundle(),
-          oObject = oView.getBindingContext().getObject(),
-          sObjectId = oObject.MaterialNumber,
-          sObjectName = oObject.ZOPEN_DELIVERY_OVERVIEW_GR;
-
-        oViewModel.setProperty("/busy", false);
-        oViewModel.setProperty(
-          "/shareSendEmailSubject",
-          oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]),
-        );
-        oViewModel.setProperty(
-          "/shareSendEmailMessage",
-          oResourceBundle.getText("shareSendEmailObjectMessage", [
-            sObjectName,
-            sObjectId,
-            location.href,
-          ]),
-        );
-      },
-
-      onAfterRendering: function () {
-        // this.showHideComposedItems();
-      },
-
-      showHideComposedItems: function () {
-        console.log("show hide composed items");
-
-        const oComponentsPanel = this.byId("componentsPanel");
-
-        const context = this.getView().getBindingContext();
-
-        if (context) {
-          console.log("binding context found");
-          // const visible = this.byId("idProductsTable").getItems().length > 0;
-          const visible = context.getProperty("HasComposedItems") == "Y";
-
-          oComponentsPanel.setVisible(visible);
-        }
-      },
-
-      onNavToPicture: function () {
-        //this.getRouter().navTo("object", {
-        //    objectId: '12344' });
-        this.getRouter().navTo("picture");
-      },
     });
-  },
-);
+
+});
 
 function formatName(firstName, lastName) {
-  if (firstName) {
-    return `${lastName}, ${firstName}`;
-  } else {
-    return lastName;
-  }
+    if (firstName) {
+        return `${lastName}, ${firstName}`;
+    } else {
+        return lastName;
+    }
 }

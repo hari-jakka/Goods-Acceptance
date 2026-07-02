@@ -1,0 +1,57 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+        <headerToolbar>
+            <Toolbar>
+                <Title text="{i18n>lblQuantity}" />
+            </Toolbar>
+        </headerToolbar>
+        <HBox
+            width=""
+            alignItems="{=${device>/system/phone} ? 'Start' : 'Center'}"
+            justifyContent="SpaceBetween"
+            direction="{=${device>/system/phone} ? 'Column' : 'Row'}"
+            class="sapUiResponsiveMargin"
+        >
+            <HBox
+                width=""
+                class="sapUiResponsiveMargin"
+            >
+                <Title text="{i18n>lblWhatIsTheQuantity}" />
+            </HBox>
+
+            <HBox
+                width="100%"
+                justifyContent="End"
+                class="sapUiResponsiveMargin"
+            >
+                <Input
+                    id="inpQuantity"
+                    class="sapUiTinyMarginBegin"
+                    type="Number"
+                    busyIndicatorDelay="0"
+                    placeholder="{i18n>lblQuantity}"
+                    valueState="None"
+                    value=""
+                    submit=""
+                    change="onQuantityChange"
+                />
+                <VBox
+                    width="2rem"
+                    class="sapUiTinyMarginBegin"
+                    justifyContent="Center"
+                    alignItems="Center"
+                >
+                    <core:Icon
+                        id="inpQuantityIcon"
+                        src="{path: 'objectView>/quantityValid', formatter: '.formatter.validStatusIcon'}"
+                        color="{path: 'objectView>/quantityValid', formatter: '.formatter.validStatusColor'}"
+                        visible="true"
+                    />
+                </VBox>
+            </HBox>
+        </HBox>
+    </Panel>
+</core:FragmentDefinition>

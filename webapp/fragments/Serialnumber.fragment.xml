@@ -1,0 +1,86 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:ndc="sap.ndc"
+>
+    <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+        <headerToolbar>
+            <Toolbar>
+                <!-- <Title text="{i18n>lblComponents
+}" /> -->
+                <Title text="{i18n>lblSerialNumber}" />
+                <ToolbarSpacer />
+                <Button
+                    press="onIncidentType05"
+                    text="{i18n>lblMissingSerialNumber}"
+                />
+            </Toolbar>
+        </headerToolbar>
+        <HBox
+            width=""
+            alignItems="{=${device>/system/phone} ? 'Start' : 'Center'}"
+            justifyContent="SpaceBetween"
+            direction="{=${device>/system/phone} ? 'Column' : 'Row'}"
+            class="sapUiResponsiveMargin"
+        >
+            <HBox
+                width=""
+                class="sapUiResponsiveMargin"
+            >
+                <!-- <Label
+                    text=""
+                    required="true"
+                    width="1rem"
+                /> -->
+                <Title text="{i18n>lblEnterSerialNumber}" />
+            </HBox>
+
+            <HBox
+                width="100%"
+                justifyContent="End"
+                class="sapUiResponsiveMargin"
+            >
+                <ndc:BarcodeScannerButton
+                    id="serialScannerButton"
+                    scanSuccess="onScanSuccess"
+                    scanFail="onScanError"
+                    inputLiveUpdate="onScanLiveupdate"
+                    provideFallback="false"
+                    disableBarcodeInputDialog="true"
+                    dialogTitle="{i18n>serialScannerTitle}"
+                />
+                <Input
+                    id="serialInput"
+                    class="sapUiTinyMarginBegin"
+                    type="Text"
+                    busyIndicatorDelay="0"
+                    placeholder="{i18n>lblSerialNumber}"
+                    valueState="{objectView>/serialState}"
+                    value="{objectView>/newSerialnumber}"
+                    submit="validateSerialnumber"
+                    change="validateSerialnumber"
+                />
+                <VBox
+                    width="2rem"
+                    class="sapUiTinyMarginBegin"
+                    justifyContent="Center"
+                    alignItems="Center"
+                >
+                    <core:Icon
+                        src="sap-icon://message-success"
+                        size="1.5rem"
+                        color="Positive"
+                        visible="{objectView>/serialValid}"
+                    />
+                </VBox>
+            </HBox>
+        </HBox>
+
+        <VBox visible="{= ${DeliveryType} === '7' }">
+            <core:Fragment
+                fragmentName="eu.aiden.ga.goodsacceptance.fragments.VendorSerialnumber"
+                type="XML"
+            />
+        </VBox>
+    </Panel>
+</core:FragmentDefinition>

@@ -1,0 +1,72 @@
+<core:FragmentDefinition xmlns:layout="sap.ui.layout"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+    <Dialog
+		id="filterDialog"
+		title="Filters"
+        stretch="true"
+		class="sapUiContentPadding"
+		placement="Bottom" >
+		<beginButton>
+			<Button text="{i18n>filterDialogCloseBtn}" press="onCloseFilterDialog" />
+		</beginButton>
+		<endButton>
+			<Button text="{i18n>filterDialogGoBtn}" 
+                type="Emphasized"
+                press="onFilterDialogGo" />
+		</endButton>
+		<content>
+            <layout:VerticalLayout width="100%">
+                <Label text="{i18n>lblDepot}" design="Bold" class="sapUiMediumMarginTop"/>
+				<Input 
+                    id="depotFilterPhone"
+                    showSuggestion="true"
+                    showClearIcon="true"
+                    suggest=".onDepotSuggest"
+                    suggestionItems="{/ZXPA0001_DEPOTS}">
+                    <suggestionItems>
+                        <core:ListItem key="{Depot}" text="{DepotName} - {Address} - {Country} ({Depot})" />
+                    </suggestionItems>
+                </Input>
+
+				<Label text="{i18n>lblSubgroup}" design="Bold" class="sapUiMediumMarginTop"/>
+				<Input 
+                    id="subGroupFilterPhone"
+                    showSuggestion="true"
+                    showClearIcon="true"
+                    suggest=".onSubGroupSuggest"
+                    suggestionItems="{/ZCDS_SUBGROUP_SUGGEST}">
+                    <suggestionItems>
+                        <core:ListItem key="{SubGroup}" text="{SubGroup}"/>
+                    </suggestionItems>
+                </Input>				
+
+                <Label text="{i18n>lblSupplier}" design="Bold" class="sapUiMediumMarginTop"/>
+		        <MultiInput
+		        	id="supplierFilterPhone"
+                    width="100%"
+		        	valueHelpRequest=".onOpenVHSupplier"
+		        	suggestionRows="{
+		        		path: '/I_Supplier_VH',
+		        		length: 20
+		        	}">
+		        	<suggestionColumns>
+		        		<Column>
+		        			<Label text="{i18n>lblSupplierId}"/>
+		        		</Column>
+		        		<Column>
+		        			<Label text="{i18n>lblSupplierName}"/>
+		        		</Column>
+		        	</suggestionColumns>
+		        	<suggestionRows>
+		        		<ColumnListItem>
+		        			<Label text="{Supplier}" />
+		        			<Label text="{SupplierName}" />
+		        		</ColumnListItem>
+		        	</suggestionRows>
+		        </MultiInput>                  
+
+            </layout:VerticalLayout>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>

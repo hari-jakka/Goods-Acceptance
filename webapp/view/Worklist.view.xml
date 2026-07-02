@@ -1,60 +1,53 @@
 <mvc:View
     xmlns:upload="sap.m.upload"
+    controllerName="eu.aiden.ga.goodsacceptance.controller.Worklist"
     xmlns="sap.m"
-    xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
     xmlns:semantic="sap.f.semantic"
     xmlns:fb="sap.ui.comp.filterbar"
-    controllerName="zxpapap0001a.controller.Worklist"
+    xmlns:ndc="sap.ndc"
 >
     <semantic:SemanticPage
         id="page"
-        headerPinnable="false"
+        headerPinnable="true"
+        preserveHeaderStateOnScroll="false"
         toggleHeaderOnTitleClick="false"
+        class="sapUiNoContentPadding"
     >
         <semantic:titleHeading>
             <Title
-                id="headingTitle"
-                text="{i18n>lblGoodsReceipt}"
+                id="worklistViewTitle"
+                text="{worklistView>/viewTitle}"
                 level="H2"
             />
         </semantic:titleHeading>
 
         <semantic:headerContent>
-            <HBox alignContent="Center" justifyContent="SpaceBetween" wrap="Wrap">
-                <HBox>
-                    <Button
-                        text="{i18n>lblCreateIncident}"
-                        type="Attention"
-                        press="onTopdeskGenericIncident"
-                        class="sapUiTinyMargin"
-                        width="auto"
-                    />
+            <HBox alignItems="Center" justifyContent="SpaceBetween" wrap="Wrap">
+                <Button
+                    text="{i18n>lblCreateIncident}"
+                    type="Attention"
+                    press="onIncidentType01"
+                    class=""
+                />
 
-                    <Button
-                        text="{i18n>lblNoDeliveryFound}"
-                        type="Attention"
-                        press="onNoDeliveryFound"
-                        width="auto"
-                        class="sapUiTinyMargin"
-                    />
-                </HBox>
 
                 <Button
                     text="{i18n>lblHistory}"
                     press="onDeliveryHistoryPress"
                     width="auto"
-                    class="sapUiTinyMargin"
                 />
-            </HBox>
 
+                  
+            </HBox>
             <fb:FilterBar
                 id="filterbar"
                 showFilterConfiguration="false"
                 showClearOnFB="true"
                 useToolbar="false"
-                showGoOnFB="false"
                 clear=".onClearFB"
+                showGoOnFB="false"
                 search=".onSearch"
                 filterChange=".onFilterChange"
             >
@@ -94,9 +87,9 @@
                             <ComboBox
                                 id="subgroupFilter"
                                 items="{
-                                        path: '/ZCDS_DELIVERY_SUBGROUP_SUGGEST',
-                                        sorter: { path: 'SubGroup' }
-                                    }"
+                            path: '/ZCDS_EQUIP_SUBGROUP_SUGGEST',
+                            sorter: { path: 'SubGroup' }
+				}"
                                 change="onSearch"
                             >
                                 <core:Item
@@ -117,7 +110,7 @@
                             <ComboBox
                                 id="supplierFilter"
                                 items="{
-                            path: '/ZXPAP0001_SUPPLIER_SUGGEST',
+                            path: '/ZXPAP0002_SUPPLIER_SUGGEST',
                             sorter: { path: 'SupplierName' }
 				}"
                                 change="onSearch"
@@ -133,12 +126,12 @@
             </fb:FilterBar>
 
             <Button
-                id="depotAccessBtn"
-                text="{i18n>lblDepotAccessMissing}"
-                press="onDepotAccessPress"
-                width="auto"
-                class="sapUiTinyMargin"
-            />
+                    id="depotAccessBtn"
+                    text="{i18n>lblDepotAccessMissing}"
+                    press="onDepotAccessPress"
+                    width="auto"
+                    class="sapUiTinyMargin"
+                />
         </semantic:headerContent>
 
         <semantic:content>
@@ -146,7 +139,7 @@
                 id="table"
                 width="auto"
                 items="{
-                    path: '/ZOPEN_DELIVERY_OVERVIEW_GR',
+                    path: '/ZOPEN_DELIVERY_OVERVIEW_GA',
                     sorter: {
                             path: 'DeliveryDate',
                             descending: false,
@@ -166,13 +159,25 @@
                         <Title
                             id="tableHeader"
                             text="{worklistView>/worklistTableTitle}"
+                            visible="{=${device>/system/phone} ? false : true}"
                             level="H3"
                         />
                         <ToolbarSpacer />
+
+                        <ndc:BarcodeScannerButton
+                            id="barcodeScannerButton"
+                            scanSuccess="onScanSuccess"
+                            scanFail="onScanError"
+                            inputLiveUpdate="onScanLiveupdate"
+                            provideFallback="false"
+                            disableBarcodeInputDialog="true"
+                            dialogTitle="Barcode Scanner"
+                        />
                         <SearchField
                             id="searchField"
-                            placeholder="{i18n>lblSearch_}"
                             tooltip="{i18n>lblSearch_}"
+                            placeholder="{i18n>lblSearch_}"
+                            width="20rem"
                             search=".onSearch"
                         >
                             <layoutData>
@@ -207,12 +212,15 @@
                     </Column>
 
                     <Column
-                        id="idSubgroupCol"
+                        id="subGroupColumn"
                         minScreenWidth="Tablet"
                         demandPopin="true"
                         popinDisplay="Inline"
                     >
-                        <Text text="{i18n>lblSubgroup}" />
+                        <Text
+                            text="{i18n>lblSubgroup}"
+                            id="subGroupColumnTitle"
+                        />
                     </Column>
 
                     <Column
@@ -250,28 +258,17 @@
 
                 <items>
                     <ColumnListItem
-                        id="listItem"
-                        type="Active"
-                        press=".onPress2"
-                        highlight="{= ${Overdue} > 0 ? 'Error' : 'None' }"
+                        type="Navigation"
+                        press=".onPress"
                     >
                         <cells>
-                            <HBox>
-                                <Text
-                                    text="{DeliveryPosition}"
-                                    id="text6"
-                                />
-                                <core:Icon
-                                    src="sap-icon://high-priority"
-                                    visible="{= ${IsWarning} === 'Y'}"
-                                    class="sapUiTinyMargin"
-                                    color="orange"
-                                />
-                            </HBox>
+                            <Text text="{DeliveryPosition}" />
+
                             <Text
                                 text="{PurchaseOrder}"
                                 id="txtPO"
                             />
+
                             <ObjectIdentifier
                                 title="{MaterialDescription}"
                                 text="{MaterialNumber}"
@@ -285,19 +282,18 @@
                             </ObjectIdentifier>
 
                             <Text text="{SubGroup}" />
-
                             <Text text="{SupplierSerialnumber}" />
 
                             <VBox>
                                 <Text
-                                    text="{path:'DeliveryQuantity', type:'sap.ui.model.type.Integer'} {DeliveredUnit}"
+                                    text="{path:'ReceivedQuantity', type:'sap.ui.model.type.Integer'} {DeliveredUnit}"
                                 />
                                 <Text
                                     text="({path:'OpenQuantity', type:'sap.ui.model.type.Integer'} {DeliveredUnit} {i18n>lblOpen})"
                                 />
                             </VBox>
                             <Text
-                                text="{ path: 'DeliveryDate' , type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy'} }"
+                                text="{ path: 'DeliveryDate' , type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'yyyy-MM-dd'} }"
                             />
                         </cells>
                     </ColumnListItem>
@@ -306,8 +302,8 @@
         </semantic:content>
     </semantic:SemanticPage>
 
-    <core:Fragment
-        fragmentName="zxpapap0001a.fragments.DeliveryHistoryDialog"
+     <core:Fragment
+        fragmentName="eu.aiden.ga.goodsacceptance.fragments.DeliveryHistoryDialog"
         type="XML"
     />
 </mvc:View>

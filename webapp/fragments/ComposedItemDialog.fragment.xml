@@ -1,0 +1,81 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:ndc="sap.ndc">
+    <Dialog id="composedItemDialog"
+        stretch="{=${device>/system/phone}}"
+        contentWidth="60rem"
+        title="{SalesOrderPosition} - {MaterialName}">
+        
+		<VBox class="sapUiSmallMargin">
+
+        	<List visible="{= !${BulkMaterial}}" 
+        	    showSeparators="None" width="auto">
+        		<CustomListItem>
+        			<HBox width="" 
+        				alignItems="{=${device>/system/phone} ? 'Start' : 'Center'}" 
+        				justifyContent="SpaceBetween" 
+        				direction="{=${device>/system/phone} ? 'Column' : 'Row'}"
+        				class="sapUiResponsiveMargin">
+	
+        				<HBox width="" class="sapUiResponsiveMargin">
+        					<Title text="{i18n>lblSerialNumber}"/>
+        				</HBox>
+	
+        				<HBox width="100%" justifyContent="End" class="sapUiResponsiveMargin">
+        					<ndc:BarcodeScannerButton
+        		                id="serialScannerButtonCompItem"
+        		                scanSuccess="onScanSuccess"
+        		                scanFail="onScanError"
+        		                inputLiveUpdate="onScanLiveupdate"
+        	                    provideFallback="false"
+								disableBarcodeInputDialog="true"
+        		                dialogTitle="{i18n>serialScannerTitle}"/>				
+        					<Input 
+        						id="inpSerialCompItem"
+        						class="sapUiTinyMarginBegin"
+        						type="Text"
+        						busyIndicatorDelay="0"
+        						placeholder="{i18n>serialQuestionPlaceholder}"
+        						valueState="{compItemDial>/serialState}"
+        						value="{compItemDial>/newSerialnumber}"
+        						submit="validateSerialnumber"
+        						change="validateSerialnumber"/>
+        					<VBox width="2rem" class="sapUiTinyMarginBegin"
+								justifyContent="Center"
+								alignItems="Center">
+        						<core:Icon src="sap-icon://message-success"
+        							size="1.5rem"
+        							color="Positive"
+        							visible="{compItemDial>/serialValid}"/>						
+        					</VBox>
+        				</HBox>
+        			</HBox>
+        		</CustomListItem>
+        	</List>   
+
+			<VBox visible="{BulkMaterial}">
+                <core:Fragment 
+					id="compItem"
+					fragmentName="eu.aiden.ga.goodsacceptance.fragments.Quantity" type="XML"/>
+            </VBox>   
+
+        	<List id="questionTableCompItem"
+			    headerText="Questions"
+        	    showSeparators="None"
+				width="auto">
+        	</List>
+		</VBox>  
+
+		<beginButton>
+			<Button text="{i18n>lblCancel}" press="closeComposedItemDialog"/>
+		</beginButton>
+
+        <endButton>
+            <Button 
+                type="Emphasized"
+                text="{i18n>lblOK}"
+                press="onOkComposedItemDialog"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

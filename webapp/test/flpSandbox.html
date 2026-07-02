@@ -1,66 +1,63 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{appTitle}}</title>
 
+    
     <script type="text/javascript">
-      window["sap-ushell-config"] = {
-        defaultRenderer: "fiori2",
-        bootstrapPlugins: {
-          RuntimeAuthoringPlugin: {
-            component: "sap.ushell.plugins.rta",
-            config: {
-              validateAppVersion: false,
+        window["sap-ushell-config"] = {
+            defaultRenderer: "fiori2",
+            bootstrapPlugins: {
+                "RuntimeAuthoringPlugin": {
+                    component: "sap.ushell.plugins.rta",
+                    config: {
+                        validateAppVersion: false
+                    }
+                }
             },
-          },
-        },
-        renderers: {
-          fiori2: {
-            componentData: {
-              config: {
-                search: "hidden",
-                enableSearch: false,
-              },
+            renderers: {
+                fiori2: {
+                    componentData: {
+                        config: {
+                            search: "hidden",
+                            enableSearch: false
+                        }
+                    }
+                }
             },
-          },
-        },
-        applications: {
-          "zxpapap0001a-display": {
-            title: "App Title",
-            description: "A Fiori application.",
-            additionalInformation: "SAPUI5.Component=zxpapap0001a",
-            applicationType: "URL",
-            url: "../",
-          },
-        },
-      };
+            applications: {
+                "euaidengagoodsacceptance-display": {
+                    title: "Goods Acceptance",
+                    description: "Goods Acceptance application",
+                    additionalInformation: "SAPUI5.Component=eu.aiden.ga.goodsacceptance",
+                    applicationType: "URL",
+                    url: "../"
+                }
+            }
+        };
     </script>
 
-    <script
-      src="../test-resources/sap/ushell/bootstrap/sandbox.js"
-      id="sap-ushell-bootstrap"
-    ></script>
-    <script
-      id="sap-ui-bootstrap"
-      src="../resources/sap-ui-core.js"
-      data-sap-ui-libs="sap.m,sap.ui.core,sap.f,sap.suite.ui.generic.template,sap.ui.comp,sap.ui.generic.app,sap.ui.table,sap.ushell"
-      data-sap-ui-async="true"
-      data-sap-ui-preload="async"
-      data-sap-ui-theme="sap_horizon"
-      data-sap-ui-compatVersion="edge"
-      data-sap-ui-language="en"
-      data-sap-ui-resourceroots='{"zxpapap0001a": "../"}'
-      data-sap-ui-frameOptions="allow"
-    ></script>
-    <script
-      id="locate-reuse-libs"
-      src="./locate-reuse-libs.js"
-      data-sap-ui-manifest-uri="../manifest.json"
-    ></script>
-  </head>
+    <script src="../test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>
+    <script id="sap-ui-bootstrap"
+        src="../resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m,sap.ui.core,sap.f,sap.suite.ui.generic.template,sap.ui.comp,sap.ui.generic.app,sap.ui.table,sap.ushell"
+        data-sap-ui-async="true"
+        data-sap-ui-preload="async"
+        data-sap-ui-theme="sap_fiori_3"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-language="en"
+        data-sap-ui-resourceroots='{"eu.aiden.ga.goodsacceptance": "../"}'
+        data-sap-ui-frameOptions="allow">
+    </script>
+    <script id="locate-reuse-libs" src="./locate-reuse-libs.js" data-sap-ui-manifest-uri="../manifest.json">
+    </script>
+</head>
 
-  <body class="sapUiBody" id="content"></body>
+
+<body class="sapUiBody" id="content">
+</body>
+
 </html>

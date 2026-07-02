@@ -1,49 +1,41 @@
 {
-  "_version": "1.58.0",
+  "_version": "1.28.0",
   "sap.app": {
-    "id": "zxpapap0001a",
+    "id": "eu.aiden.ga.goodsacceptance",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
-      "version": "0.9.4"
+      "version": "0.10.3"
     },
-    "title": "{{lblGoodsReceipt}}",
+    "title": "{{lblGoodsAcceptance}}",
     "description": "{{appDescription}}",
     "resources": "resources.json",
     "sourceTemplate": {
       "id": "@sap/generator-fiori:worklist",
-      "version": "1.11.4",
-      "toolsId": "253e4b12-afdd-424c-b2f6-8e0fa44dc7fa"
+      "version": "1.11.5",
+      "toolsId": "0d5be405-855e-46bd-8c64-0f89d3e2d0da"
     },
     "dataSources": {
       "mainService": {
-        "uri": "/sap/opu/odata/sap/ZXPAP0001A_SRV/",
+        "uri": "/sap/opu/odata/sap/ZXPAP0002_SRV/",
         "type": "OData",
         "settings": {
-          "annotations": ["mainService_Annotation"],
+          "annotations": [],
           "localUri": "localService/metadata.xml",
           "odataVersion": "2.0"
-        }
-      },
-      "mainService_Annotation": {
-        "uri": "/destinations/SAP_Backend/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZXPAP0001A_ANNO_MDL',Version='0001')/$value/",
-        "type": "ODataAnnotation",
-        "settings": {
-          "localUri": "localService/mainService_Annotation.xml"
         }
       }
     },
     "crossNavigation": {
       "inbounds": {
-        "GoodsReceipt-Display": {
-          "semanticObject": "GoodsReceipt",
+        "GoodsAcceptance-Display": {
+          "semanticObject": "GoodsAcceptance",
           "action": "Display",
           "title": "{{flpTitle}}",
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"
-          },
-          "subTitle": "{{flpSubtitle}}"
+          }
         }
       }
     }
@@ -87,21 +79,19 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "zxpapap0001a.i18n.i18n"
+          "bundleName": "eu.aiden.ga.goodsacceptance.i18n.i18n"
         }
       },
       "": {
         "dataSource": "mainService",
-        "preload": false,
-        "settings": {
-          "useBatch": true
-        }
+        "preload": true,
+        "settings": {}
       }
     },
     "resources": {
       "css": [
         {
-          "uri": "css/styles.css"
+          "uri": "css/style.css"
         }
       ]
     },
@@ -109,11 +99,13 @@
       "config": {
         "routerClass": "sap.m.routing.Router",
         "viewType": "XML",
-        "viewPath": "zxpapap0001a.view",
+        "viewPath": "eu.aiden.ga.goodsacceptance.view",
         "controlId": "app",
         "controlAggregation": "pages",
         "bypassed": {
-          "target": ["notFound"]
+          "target": [
+            "notFound"
+          ]
         },
         "async": true
       },
@@ -121,17 +113,16 @@
         {
           "pattern": "",
           "name": "worklist",
-          "target": ["worklist"]
+          "target": [
+            "worklist"
+          ]
         },
         {
-          "pattern": "ZOPEN_DELIVERY_OVERVIEW_GR/{objectId}",
+          "pattern": "ZOPEN_DELIVERY_OVERVIEW_GA/{objectId}",
           "name": "object",
-          "target": ["object"]
-        },
-        {
-          "pattern": "picture",
-          "name": "picture",
-          "target": ["picture"]
+          "target": [
+            "object"
+          ]
         }
       ],
       "targets": {
@@ -154,24 +145,23 @@
         "notFound": {
           "viewName": "NotFound",
           "viewId": "notFound"
-        },
-        "picture": {
-          "viewName": "Picture",
-          "viewId": "picture",
-          "viewLevel": 3,
-          "title": "{i18n>pictureTitle}"
         }
       }
     },
     "rootView": {
-      "viewName": "zxpapap0001a.view.App",
+      "viewName": "eu.aiden.ga.goodsacceptance.view.App",
       "type": "XML",
       "async": true,
       "id": "app"
+    },
+    "services": {
+      "ShellUIService": {
+        "factoryName": "sap.ushell.ui5service.ShellUIService"
+      }
     }
   },
   "sap.cloud": {
     "public": true,
-    "service": "zxpapap0001a"
+    "service": "euaidengagoodsacceptance"
   }
 }

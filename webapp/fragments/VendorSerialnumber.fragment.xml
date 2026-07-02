@@ -1,0 +1,77 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:ndc="sap.ndc"
+>
+    <HBox
+        width=""
+        alignItems="{=${device>/system/phone} ? 'Start' : 'Center'}"
+        justifyContent="SpaceBetween"
+        direction="{=${device>/system/phone} ? 'Column' : 'Row'}"
+        class="sapUiResponsiveMargin"
+    >
+        <HBox
+            width=""
+            class="sapUiResponsiveMargin"
+            justifyContent="Center"
+            alignItems="Baseline"
+            alignContent="Center"
+        >
+            <!-- <Label
+                text=""
+                required="true"
+                width="1rem"
+            /> -->
+            <Title text="{i18n>lblEnterSupplierSerialNumber}" />
+        </HBox>
+
+
+            <HBox
+                width="100%"
+                justifyContent="End"
+                class="sapUiResponsiveMargin"
+            >
+                <ndc:BarcodeScannerButton
+                    id="vendorSerialScannerButton"
+                    scanSuccess="onScanSuccess"
+                    scanFail="onScanError"
+                    inputLiveUpdate="onScanLiveupdate"
+                    provideFallback="false"
+                    disableBarcodeInputDialog="true"
+                    dialogTitle="Serialnumber Scanner"
+                />
+                
+                <Input
+                    id="vendorSerialInput"
+                    class="sapUiTinyMarginBegin"
+                    busyIndicatorDelay="0"
+                    placeholder="{i18n>lblSupplierSerialNumber}"
+                    valueState="{objectView>/vendorSerialState}"
+                    value="{objectView>/vendorSerialnumber}"
+                    submit=""
+                    change="validateVendorSerialnumber"
+                />
+                <VBox
+                    width="2rem"
+                    class="sapUiTinyMarginBegin"
+                    justifyContent="Center"
+                    alignItems="Center"
+                >
+                    <core:Icon
+                        src="sap-icon://message-success"
+                        size="1.5rem"
+                        color="Positive"
+                        visible="{objectView>/vendorSerialValid}"
+                    />
+                </VBox>
+
+            </HBox>        
+    </HBox>
+
+    <HBox
+        justifyContent="End"
+        class="sapUiResponsiveMargin"
+    >
+        <Button text="{i18n>lblNoSupplierSerialNumber}" press="onNoSupplierSerialNumber"></Button>
+    </HBox>
+</core:FragmentDefinition>

@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:upload="sap.m.upload">
+    <Dialog id="pictureDialog"
+        title="{i18n>lblAddPictures}">
+        <upload:UploadSet
+            id="UploadSet"
+            mode="None"
+            multiple="true"
+            instantUpload="false"
+            showIcons="true"
+            visible="{worklistView>/page/editable}"
+            uploadButtonInvisible="false"
+            terminationEnabled="true"
+            maxFileNameLength="55"
+            beforeUploadStarts="onBeforeUploadStarts"
+            uploadCompleted="onUploadCompleted"
+            class="sapUiResponsiveMargin"
+        />
+        <endButton>
+            <Button 
+                text="{i18n>lblClose}"
+                press="onClosePictureDialog"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

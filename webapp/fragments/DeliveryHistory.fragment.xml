@@ -51,7 +51,21 @@
                 demandPopin="true"
                 popinDisplay="Inline"
             >
-                <Text text="{i18n>lblQTYReceived}" />
+                <Text text="{i18n>lblSerialNumber}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblSupplierSerialNumber}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblQTYAccepted}" />
             </Column>
             <Column
                 minScreenWidth="Tablet"
@@ -59,6 +73,13 @@
                 popinDisplay="Inline"
             >
                 <Text text="{i18n>lblUoM}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblDeviations}" />
             </Column>
         </columns>
 
@@ -88,10 +109,13 @@
                         color="{ path: 'PostingStatus', formatter: '.formatter.colorForStatus' }"
                         size="1rem"
                     />
+                    <Text text="{SerialNumber}" />
+                    <Text text="{VendorSerialNumber}" />
                     <Text
-                        text="{path: 'ReceivedQuantity', formatter: '.formatter.IntegerOrFloat'}"
+                        text="{path: 'AcceptedQuantity', formatter: '.formatter.IntegerOrFloat'}"
                     />
                     <Text text="{UoM}" />
+                    <Text text="{Deviations}" />
                 </cells>
             </ColumnListItem>
         </items>
