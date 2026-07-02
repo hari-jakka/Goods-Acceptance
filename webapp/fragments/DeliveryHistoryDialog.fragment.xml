@@ -1,0 +1,228 @@
+<core:FragmentDefinition
+    xmlns:filterbar="sap.ui.comp.filterbar"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+    <Dialog id="historyDialog">
+        <content>
+            <filterbar:FilterBar
+                id="historyFilterbar"
+                showFilterConfiguration="false"
+                showClearOnFB="true"
+                useToolbar="false"
+                showGoOnFB="false"
+                clear=".onHistoryClear"
+                search=".onHistorySearch"
+                filterChange=".onHistoryFilterChange"
+            >
+                <filterbar:filterGroupItems>
+                    <filterbar:FilterGroupItem
+                        name="PostingDate"
+                        label="{i18n>lblPastNumberOfDays}"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <filterbar:control>
+                            <Input
+                                id="historyDatePicker"
+                                change=".onHistorySearchChange"
+                                type="Number"
+                                value="5"
+                            />
+                        </filterbar:control>
+                    </filterbar:FilterGroupItem>
+
+                    <filterbar:FilterGroupItem
+                        name="Search"
+                        label="{i18n>lblSearch}"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <filterbar:control>
+                            <Input
+                                id="historySearch"
+                                showClearIcon="true"
+                                change=".onHistorySearchChange"
+                            />
+                        </filterbar:control>
+                    </filterbar:FilterGroupItem>
+                </filterbar:filterGroupItems>
+            </filterbar:FilterBar>
+            <Table
+                id="historyDialogTable"
+                inset="false"
+                items="{
+                    path: '/ZCDS_HISTORY_GR_DETAILS',
+                    suspended: true
+                }"
+            >
+                <columns>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblSupplier}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblDelivery}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblPostingNr}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblMaterial}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblSubgroup}" />
+                    </Column>
+                    <Column>
+                        <Text text="{i18n>lblSupplierBatch}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblPostingDate}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblPostingTime}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblPostedBy}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblPostingStatus}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblQTYReceived}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblUoM}" />
+                    </Column>
+
+                     <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblQTYRevert}" />
+                    </Column>
+
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="" />
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <VBox>
+                                <Text text="{Supplier}" />
+                                <Text text="{SupplierName}" />
+                            </VBox>
+                            <Text
+                                text="{DeliveryDocument} - {DeliveryPosition}"
+                            />
+                            <Text text="{Postingnr}" />
+                            <VBox>
+                                <Text text="{Material}" />
+                                <Text text="{MaterialDescription}" />
+                            </VBox>
+                            <Text text="{Subgroup}" />
+                            <Text text="{SupplierBatch}" />
+                            <Text
+                                text="{
+                        path: 'PostingDate',
+                        type: 'sap.ui.model.type.DateTime',
+                        formatOptions: {
+                            pattern: 'dd.MM.YYYY'
+                        }
+                    }"
+                            />
+                            <Text
+                                text="{
+                        path: 'PostingTime',
+                        type: 'sap.ui.model.type.TimeOfDay',
+                        formatter: '.formatter.formatMsTime'
+                    }"
+                            />
+                            <Text text="{PostedBy}" />
+                            <core:Icon
+                                src="{ path: 'PostingStatus', formatter: '.formatter.iconForStatus' }"
+                                color="{ path: 'PostingStatus', formatter: '.formatter.colorForStatus' }"
+                                size="1rem"
+                            />
+                            <Text
+                                text="{path: 'ReceivedQuantity', formatter: '.formatter.IntegerOrFloat'}"
+                            />
+                            <Text text="{UoM}" />
+                            <Text
+                                text="{path: 'Storno_QTY', formatter: '.formatter.IntegerOrFloat'}"
+                            />
+
+                            <HBox visible="{= ${Storno_QTY} > 0}">
+                                <Input
+                                    change="onStornoChange"
+                                    id="stornoQuantity"
+                                />
+                                <Button
+                                    text="{i18n>lblRevert}"
+                                    press="onStorno"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <endButton>
+            <Button
+                text="{i18n>lblClose}"
+                press=".onHistoryDialogClose"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

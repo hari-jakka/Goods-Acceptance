@@ -1,0 +1,66 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:upload="sap.m.upload"
+    xmlns:u="sap.ui.unified"
+    xmlns:l="sap.ui.layout"
+>
+    <Dialog
+        id="DelNotePictureDialog"
+        title="{i18n>lblAttachments}"
+    >
+        <Panel >
+            <l:VerticalLayout>
+                <List
+                    id="delNoteImageList"
+                    items="{
+				path: 'to_DelNoteImage'
+			}"
+                >
+                    <CustomListItem>
+                        <HBox>
+                            <core:Icon
+                                size="2rem"
+                                src="sap-icon://attachment-photo"
+                                class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom"
+                            />
+                            <VBox
+                                class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom"
+                            >
+                                <Link
+                                    text="{Description}"
+                                    target="{DocumentId}"
+                                    press="showDelNoteImage"
+                                />
+                                <Label text="{ProductId}" />
+                            </VBox>
+                        </HBox>
+                    </CustomListItem>
+                </List>
+
+                <l:VerticalLayout>
+                    <u:FileUploader
+                        id="fileUploader"
+                        name="myFileUpload"
+                        useMultipart="false"
+                        uploadUrl="upload/"
+                        fileType="jpg,png,bmp,pdf"
+                        tooltip="Upload your file to the local server"
+                        uploadComplete="handleUploadComplete"
+                    />
+                    <Button
+                        text="{i18n>lblUploadFile}"
+                        press="handleUploadPress"
+                    />
+                </l:VerticalLayout>
+            </l:VerticalLayout>
+        </Panel>
+
+            <endButton>
+                <Button
+                    text="{i18n>lblClose}"
+                    press="onClosePictureDialog"
+                />
+            </endButton>
+    </Dialog>
+</core:FragmentDefinition>

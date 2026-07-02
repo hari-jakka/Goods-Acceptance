@@ -1,0 +1,177 @@
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "zxpapap0001a",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.9.4"
+    },
+    "title": "{{lblGoodsReceipt}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:worklist",
+      "version": "1.11.4",
+      "toolsId": "253e4b12-afdd-424c-b2f6-8e0fa44dc7fa"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZXPAP0001A_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": ["mainService_Annotation"],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "mainService_Annotation": {
+        "uri": "/destinations/SAP_Backend/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZXPAP0001A_ANNO_MDL',Version='0001')/$value/",
+        "type": "ODataAnnotation",
+        "settings": {
+          "localUri": "localService/mainService_Annotation.xml"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "GoodsReceipt-Display": {
+          "semanticObject": "GoodsReceipt",
+          "action": "Display",
+          "title": "{{flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          },
+          "subTitle": "{{flpSubtitle}}"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.121.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.suite.ui.generic.template": {},
+        "sap.ui.comp": {},
+        "sap.ui.generic.app": {},
+        "sap.ui.table": {},
+        "sap.ushell": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zxpapap0001a.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": false,
+        "settings": {
+          "useBatch": true
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/styles.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "zxpapap0001a.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "bypassed": {
+          "target": ["notFound"]
+        },
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "worklist",
+          "target": ["worklist"]
+        },
+        {
+          "pattern": "ZOPEN_DELIVERY_OVERVIEW_GR/{objectId}",
+          "name": "object",
+          "target": ["object"]
+        },
+        {
+          "pattern": "picture",
+          "name": "picture",
+          "target": ["picture"]
+        }
+      ],
+      "targets": {
+        "worklist": {
+          "viewName": "Worklist",
+          "viewId": "worklist",
+          "viewLevel": 1,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "object": {
+          "viewName": "Object",
+          "viewId": "object",
+          "viewLevel": 2,
+          "title": "{i18n>objectViewTitle}"
+        },
+        "objectNotFound": {
+          "viewName": "ObjectNotFound",
+          "viewId": "objectNotFound"
+        },
+        "notFound": {
+          "viewName": "NotFound",
+          "viewId": "notFound"
+        },
+        "picture": {
+          "viewName": "Picture",
+          "viewId": "picture",
+          "viewLevel": 3,
+          "title": "{i18n>pictureTitle}"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "zxpapap0001a.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "zxpapap0001a"
+  }
+}

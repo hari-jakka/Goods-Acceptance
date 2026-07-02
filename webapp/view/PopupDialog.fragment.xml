@@ -1,0 +1,33 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core">
+   <Dialog
+      id="idDialog"
+      title="{DeliveryDocument}">
+    
+<beginButton>
+
+<Button text="{i18n>lblCancel}" press=".onCloseDialog"/>
+</beginButton>
+<VBox width="100%" direction="Column" id="vbox0" alignContent="Center" alignItems="Center">
+<items>
+<Text xmlns="sap.m" width="300px" text="Delivery Number" id="text0" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+<Input width="300px" id="_val0" value="{DeliveryDocument}" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" editable="false"/>
+<Input width="300px" id="_val6" value="{DeliveryPosition}" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" visible="false"/>
+
+<Text xmlns="sap.m" width="300px" text="Material" id="text1" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+<Input width="300px" id="_val1" value="{MaterialNumber}" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" editable="false"/>
+<Text xmlns="sap.m" width="300px" text="Description" id="text2" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+<Input width="300px" id="_val2" value="{MaterialDescription}" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" editable="false"/>
+<Text xmlns="sap.m" width="300px" text="Quantity" id="text3" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+<Input width="300px" id="_val3" value="{DeliveryQuantity}" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+<Text xmlns="sap.m" width="300px" text="Deliverynote number" id="text4" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+<Input width="300px" id="_val4" value="" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+<HBox id="hb1"> <CheckBox text="Damage" selected="false" id="damage" />
+                <Input width="300px" id="_val5" value="" class="sapUiSmallMarginBegin sapUiSmallMarginEnd"/>
+</HBox>
+<Button width="300px" press=".onConfirmDialog" id="ok" text="Confirm" class="sapUiSmallMarginBegin sapUiSmallMarginEnd" />
+</items>
+</VBox> 
+</Dialog>
+</core:FragmentDefinition>

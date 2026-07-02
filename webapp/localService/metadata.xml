@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="http://boelsdev:8000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="ZXPAP0001A_SRV" xml:lang="nl" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="User" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Depot"/>
+                </Key>
+                <Property Name="Depot" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="Attachment" m:HasStream="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ObjectId"/>
+                    <PropertyRef Name="ObjectType"/>
+                    <PropertyRef Name="ObjectCat"/>
+                </Key>
+                <Property Name="ObjectId" Type="Edm.String" Nullable="false" MaxLength="70" sap:unicode="false" sap:label="Instance-ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ObjectType" Type="Edm.String" Nullable="false" MaxLength="32" sap:unicode="false" sap:label="Objecttype" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ObjectCat" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Objectcategorie" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DocumentId" Type="Edm.String" Nullable="false" MaxLength="36" sap:unicode="false" sap:label="Document-ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FileName" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Bestandsnaam" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="MimeType" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="MIME-type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Creator" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Gecreëerd door" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CreatorName" Type="Edm.String" Nullable="false" MaxLength="60" sap:unicode="false" sap:label="Auteur" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CreatedOn" Type="Edm.DateTime" Nullable="false" Precision="0" sap:unicode="false" sap:label="Timestamp" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="I_Supplier_VHType" sap:label="Leverancier" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Supplier"/>
+                </Key>
+                <Property Name="Supplier" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="SupplierName" sap:label="Leverancier" sap:quickinfo="Rekeningnummer van leverancier/crediteur"/>
+                <Property Name="SupplierName" Type="Edm.String" MaxLength="35" sap:label="Naam" sap:quickinfo="Naam 1"/>
+                <Property Name="AuthorizationGroup" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Bevoegdheid" sap:quickinfo="Bevoegdheidsgroep"/>
+                <Property Name="SupplierAccountGroup" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Rekeninggroep" sap:quickinfo="Rekeninggroep crediteur"/>
+                <Property Name="IsBusinessPurposeCompleted" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Doel voltooid" sap:quickinfo="Teken voor afgehandeld bedrijfsdoel"/>
+            </EntityType>
+            <EntityType Name="ZXPA0001_DEPOTSType" sap:label="List of depots" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Depot"/>
+                </Key>
+                <Property Name="Depot" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Klant" sap:quickinfo="Klantnummer"/>
+                <Property Name="DepotName" Type="Edm.String" MaxLength="25" sap:display-format="UpperCase" sap:label="Naam" sap:quickinfo="Zoekbegrip voor matchcode-gebruik"/>
+                <Property Name="City" Type="Edm.String" MaxLength="35" sap:label="Plaats"/>
+                <Property Name="Address" Type="Edm.String" MaxLength="35" sap:label="Straat" sap:quickinfo="Straat en huisnummer"/>
+                <Property Name="PostalCode" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Postcode"/>
+                <Property Name="Country" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Land" sap:quickinfo="Landcode"/>
+            </EntityType>
+            <EntityType Name="ZOPEN_DELIVERY_OVERVIEW_GRType" sap:label="Delivery for AP01" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DeliveryDocument"/>
+                    <PropertyRef Name="DeliveryPosition"/>
+                </Key>
+                <Property Name="DeliveryDocument" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Levering"/>
+                <Property Name="DeliveryPosition" Type="Edm.String" Nullable="false" MaxLength="6" sap:display-format="NonNegative" sap:label="Positie" sap:quickinfo="Leveringspositie"/>
+                <Property Name="Depot" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Goederenontvanger"/>
+                <Property Name="Supplier" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Leverancier" sap:quickinfo="Rekeningnummer van leverancier"/>
+                <Property Name="SupplierName" Type="Edm.String" MaxLength="35" sap:label="Naam" sap:quickinfo="Naam 1"/>
+                <Property Name="DeliveryDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Leveringstermijn"/>
+                <Property Name="MaterialNumber" Type="Edm.String" MaxLength="40" sap:display-format="UpperCase" sap:label="Artikel" sap:quickinfo="Artikelnummer"/>
+                <Property Name="MaterialDescription" Type="Edm.String" MaxLength="40" sap:label="Positieomschrijving" sap:quickinfo="Korte tekst van klantorderpositie"/>
+                <Property Name="DeliveryQuantity" Type="Edm.Int16"/>
+                <Property Name="UoM" Type="Edm.String" MaxLength="3" sap:label="Verkoophoevh.eenheid" sap:quickinfo="Verkoophoeveelheidseenheid" sap:semantics="unit-of-measure"/>
+                <Property Name="ReceivedQuantity" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="OpenQuantity" Type="Edm.Int16"/>
+                <Property Name="DeliveryNotePresent" Type="Edm.String" MaxLength="16" sap:display-format="UpperCase" sap:label="Afleveringsbewijs" sap:quickinfo="Nummer van extern afleveringsbewijs"/>
+                <Property Name="Damage" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Schade"/>
+                <Property Name="DamageRemark" Type="Edm.String" MaxLength="50" sap:label="Tekst" sap:quickinfo="Positietekst"/>
+                <Property Name="PurchaseOrder" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Referentiedocument" sap:quickinfo="Documentnummer van referentiedocument"/>
+                <Property Name="PurchaseOrderPosition" Type="Edm.String" MaxLength="6" sap:display-format="NonNegative" sap:label="Referentieoper.pos." sap:quickinfo="Positienummer van referentieoperatiepositie"/>
+                <Property Name="Status" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Ontvangststatus"/>
+                <Property Name="wbstk" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Goed.bewegingsstatus" sap:quickinfo="Goederenbewegingsstatus (alle posities)"/>
+                <Property Name="gbstk" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Totaalstatus" sap:quickinfo="Totaalbewerkingsstatus (kop/alle posities)"/>
+                <Property Name="pdstk" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="LOB-status" sap:quickinfo="LOB-status op kopniveau"/>
+            </EntityType>
+            <ComplexType Name="Damage">
+                <Property Name="Vbelnr" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Levering" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Posnr" Type="Edm.String" Nullable="false" MaxLength="6" sap:label="Positie" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </ComplexType>
+            <EntityContainer Name="ZXPAP0001A_SRV_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="UserSet" EntityType="ZXPAP0001A_SRV.User" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="AttachmentSet" EntityType="ZXPAP0001A_SRV.Attachment" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="I_Supplier_VH" EntityType="ZXPAP0001A_SRV.I_Supplier_VHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="ZXPA0001_DEPOTS" EntityType="ZXPAP0001A_SRV.ZXPA0001_DEPOTSType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZOPEN_DELIVERY_OVERVIEW_GR" EntityType="ZXPAP0001A_SRV.ZOPEN_DELIVERY_OVERVIEW_GRType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <FunctionImport Name="GetDepot" ReturnType="ZXPAP0001A_SRV.User" EntitySet="UserSet" m:HttpMethod="GET"/>
+                <FunctionImport Name="SetDamage" ReturnType="ZXPAP0001A_SRV.Damage" m:HttpMethod="POST">
+                    <Parameter Name="DeliveryPosition" Type="Edm.String" Mode="In" MaxLength="6"/>
+                    <Parameter Name="DeliveryDocument" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+            </EntityContainer>
+            <Annotations Target="ZXPAP0001A_SRV.ZXPAP0001A_SRV_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+                <Annotation Term="Aggregation.ApplySupported">
+                    <Record>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Rollup" EnumMember="None"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <atom:link rel="self" href="http://boelsdev:8000/sap/opu/odata/sap/ZXPAP0001A_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="http://boelsdev:8000/sap/opu/odata/sap/ZXPAP0001A_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

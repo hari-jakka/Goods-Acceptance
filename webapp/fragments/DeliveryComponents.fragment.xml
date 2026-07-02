@@ -1,0 +1,41 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+
+   <Table id="idProductsTable"
+		inset="false"	    
+		noDataText="{i18n>lblNoComposedItems}"
+		items="{
+			path: 'to_ComposedItems',
+			sorter: {
+				path: 'UpperPosition'
+			}
+		}">
+		
+		<columns>
+			<Column width="12em">
+				<Text text="{i18n>lblMaterial}" />
+			</Column>
+			<Column width="12em">
+				<Text text="{i18n>lblMaterialDescription}" />
+			</Column>	
+			<Column width="12em">
+				<Text text="{i18n>lblQuantity}" />
+			</Column>
+			
+		</columns>
+
+
+		<items>
+                    <ColumnListItem type="Active" press=".onPress2" id="idCollistitem">
+                        <cells>
+                            <Text text="{Material}" id="text100"/> 
+                            <Text text="{MaterialName}" id="text101"/>                             
+							<Text id="idDelQty" text="{path: 'ComponentOrderQuantity',formatter: '.formatter.ComponentQuantity'} {OrderUnit}"  />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+	</Table>
+    </core:FragmentDefinition>

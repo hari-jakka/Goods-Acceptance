@@ -1,0 +1,162 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:semantic="sap.m.semantic"
+    xmlns:core="sap.ui.core"
+    controllerName="zxpapap0001a.controller.Object"
+>
+    <semantic:SemanticPage
+        id="page"
+        busy="{objectView>/busy}"
+        busyIndicatorDelay="{objectView>/delay}"
+        showNavButton="true"
+        showFooter="true"
+        title="{i18n>lblDeliveryDetails}"
+        navButtonPress="onNavBack"
+    >
+        <ObjectHeader
+            title="{DeliveryDocument}"
+            number="{=${device>/system/phone} ? '' : ${Depot}}"
+            numberUnit="{i18n>lblDepot}"
+            numberTextDirection="RTL"
+            icon="sap-icon://inspection"
+            responsive="true"
+            backgroundDesign="Translucent"
+            class="sapUiResponsivePadding--header"
+        >
+            <ObjectAttribute
+                id="oa1"
+                title="{i18n>lblDepot}"
+                text="{Depot}"
+                visible="{=${device>/system/phone}}"
+            />
+        </ObjectHeader>
+        <semantic:content>
+            <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+                <core:Fragment
+                    fragmentName="zxpapap0001a.fragments.DeliveryDetails"
+                    type="XML"
+                />
+            </Panel>
+            <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="{i18n>lblDeliveryNote}" />
+                        <ToolbarSpacer />
+                        <Button
+                            text="{i18n>lblNoDeliveryNote}"
+                            press="onIncidentType2"
+                            enabled="{= ${DelNoteAvailable} === 'N' &amp;&amp; ${DeliveryType} !== 'V' }"
+                        />
+                        <Button
+                            icon="sap-icon://add-photo"
+                            press="onOpenPictures"
+                        />
+                    </Toolbar>
+                </headerToolbar>
+                <List
+                    items="{
+                            path: 'to_DelNoteImage'
+                        }"
+                >
+                    <CustomListItem>
+                        <HBox>
+                            <core:Icon
+                                size="2rem"
+                                src="sap-icon://attachment-photo"
+                                class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom"
+                            />
+                            <VBox
+                                class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom"
+                            >
+                                <Link
+                                    text="{Description}"
+                                    target="{DocumentId}"
+                                    press="showDelNoteImage"
+                                />
+                                <Label text="{ProductId}" />
+                            </VBox>
+                        </HBox>
+                    </CustomListItem>
+                </List>
+            </Panel>
+            <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="{i18n>lblDeliveryDetails}" />
+                        <ToolbarSpacer />
+                        <Button
+                            text="{i18n>lblIncorrectItem}"
+                            press="onIncidentType3"
+                        />
+                        <Button
+                            text="{i18n>lblOverUnderdelivery}"
+                            press="onIncidentType4"
+                        />
+                    </Toolbar>
+                </headerToolbar>
+                <core:Fragment
+                    fragmentName="zxpapap0001a.fragments.DeliveryInput"
+                    type="XML"
+                />
+            </Panel>
+            <Panel
+                id="componentsPanel"
+                class="sapUiSmallMarginTop sapUiNoContentPadding"
+            >
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="{i18n>lblComponents}" />
+                    </Toolbar>
+                </headerToolbar>
+                <core:Fragment
+                    fragmentName="zxpapap0001a.fragments.DeliveryComponents"
+                    type="XML"
+                />
+            </Panel>
+
+            <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+                <headerToolbar>
+                    <Toolbar>
+                        <!-- <Title text="{i18n>lblComponents
+}" /> -->
+                        <Title text="{i18n>lblIncidents}" />
+                    </Toolbar>
+                </headerToolbar>
+                <core:Fragment
+                    fragmentName="zxpapap0001a.fragments.TopdeskTickets"
+                    type="XML"
+                />
+            </Panel>
+
+            <Panel class="sapUiSmallMarginTop sapUiNoContentPadding">
+                <headerToolbar>
+                    <Toolbar>
+                        <!-- <Title text="{i18n>lblComponents
+}" /> -->
+                        <Title text="{i18n>lblHistory}" />
+                    </Toolbar>
+                </headerToolbar>
+                <core:Fragment
+                    fragmentName="zxpapap0001a.fragments.DeliveryHistory"
+                    type="XML"
+                />
+            </Panel>
+        </semantic:content>
+        <semantic:customFooterContent>
+            <Button
+                press="onNavBack"
+                type="Default"
+                text="{i18n>lblClose}"
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd"
+            />
+            <Button
+                press=".onConfirm"
+                id="ok"
+                type="Accept"
+                text="{i18n>lblConfirm}"
+                class="sapUiSmallMarginBegin sapUiSmallMarginEnd"
+            />
+        </semantic:customFooterContent>
+    </semantic:SemanticPage>
+</mvc:View>

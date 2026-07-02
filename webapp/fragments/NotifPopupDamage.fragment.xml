@@ -1,0 +1,42 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"	
+    xmlns:f="sap.ui.layout.form"
+>
+    <Dialog id="notifDialogDamage" title="Notification - {NotifNumberDamage}">
+
+	<f:SimpleForm id="SimpleFormDisplay1"
+			editable="false"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="3"
+			labelSpanL="3"
+			labelSpanM="3"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="4"
+			emptySpanL="4"
+			emptySpanM="4"
+			emptySpanS="0"
+			columnsXL="1"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false" >
+			<f:content>
+				<Label text="{i18n>lblMaterial}" />
+        		<Text text="{MaterialNumber}"/>
+				<Label text="{i18n>lblMaterialDescription}" />
+        		<Text text="{MaterialDescription}"/>
+				<Label text="{i18n>Obsolete}" />
+        		<Text text="{NotifNumberDamageDescription}"/>	
+			</f:content>
+		</f:SimpleForm>    
+
+
+        <beginButton>
+            <Button
+                text="{i18n>lblClose}"
+                press=".onCloseDialogDamage"
+            />
+        </beginButton>
+    </Dialog>
+</core:FragmentDefinition>

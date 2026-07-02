@@ -1,0 +1,99 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+    <Table
+        id="historyTable"
+        inset="false"
+        items="{
+			path: 'to_History'
+		}"
+    >
+        <columns>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblPostingNr}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblPostingDate}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblPostingTime}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblPostedBy}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblPostingStatus}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblQTYReceived}" />
+            </Column>
+            <Column
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblUoM}" />
+            </Column>
+        </columns>
+
+        <items>
+            <ColumnListItem>
+                <cells>
+                    <Text text="{Postingnr}" />
+                    <Text
+                        text="{
+                        path: 'PostingDate',
+                        type: 'sap.ui.model.type.DateTime',
+                        formatOptions: {
+                            pattern: 'dd.MM.YYYY'
+                        }
+                    }"
+                    />
+                    <Text
+                        text="{
+                        path: 'PostingTime',
+                        type: 'sap.ui.model.type.TimeOfDay',
+                        formatter: '.formatter.formatMsTime'
+                    }"
+                    />
+                    <Text text="{PostedBy}" />
+                    <core:Icon
+                        src="{ path: 'PostingStatus', formatter: '.formatter.iconForStatus' }"
+                        color="{ path: 'PostingStatus', formatter: '.formatter.colorForStatus' }"
+                        size="1rem"
+                    />
+                    <Text
+                        text="{path: 'ReceivedQuantity', formatter: '.formatter.IntegerOrFloat'}"
+                    />
+                    <Text text="{UoM}" />
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>

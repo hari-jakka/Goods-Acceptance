@@ -1,0 +1,79 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+    <f:SimpleForm
+        editable="false"
+        layout="ResponsiveGridLayout"
+        title=""
+        labelSpanXL="3"
+        labelSpanL="3"
+        labelSpanM="4"
+        labelSpanS="6"
+        adjustLabelSpan="true"
+        emptySpanXL="0"
+        emptySpanL="0"
+        emptySpanM="0"
+        emptySpanS="0"
+        columnsXL="2"
+        columnsL="2"
+        columnsM="2"
+        singleContainerFullSize="false"
+        backgroundDesign="Solid"
+        >
+        <f:content>
+            <Label text="{i18n>lblDeliveryNote}" />
+            <Text
+                id="_val20"
+                text="{DeliveryDocument}"
+            />
+            <Text
+                id="_val26"
+                text="{DeliveryPosition}"
+            />
+            <Label text="{i18n>lblMaterial}" />
+            <Text text="{MaterialNumber}" />
+            <Label text="{i18n>lblMaterialDescription}" />
+            <Text text="{MaterialDescription}" />
+            <Label text="{i18n>lblSubgroup}" />
+            <Text text="{SubGroup}" />
+
+            <Label text="{i18n>lblOrder}" />
+            <Text text="{PurchaseOrder}" />
+
+            <Label text="{i18n>lblSupplier}" />
+            <Text text="{Supplier} - {SupplierName}" />
+
+            <Label text="{i18n>lblQTYDelivery}" />
+            <Text
+                text="{path: 'DeliveryQuantity',formatter: '.formatter.IntegerOrFloat'} {UoM}"
+            />
+            <Label text="{i18n>lblQTYReceived}" />
+            <Text
+                text="{path: 'ReceivedQuantity',formatter: '.formatter.IntegerOrFloat'} {UoM}"
+            />
+            <Label text="{i18n>lblQTYOpen}" />
+            <Text
+                id="openqty"
+                text="{path: 'OpenQuantity',formatter: '.formatter.IntegerOrFloat'} {UoM}"
+            />
+            <Text
+                visible="false"
+                id="openqty_chk"
+                text="{OpenQuantity}"
+            />
+            <Label text="{i18n>lblPOCreatedBy}" />
+            <Text 
+                text="{POCreatedBy}"
+                visible="{= ${POCreatedBy} !== '' }"
+            />
+            <Label text="{i18n>lblEquipmentNumber}" />
+            <Text 
+                text="{EquipmentNr}"
+                visible="{= ${EquipmentNr} !== '' }"
+            />
+        </f:content>
+    </f:SimpleForm>
+    <!-- </VBox> -->
+</core:FragmentDefinition>

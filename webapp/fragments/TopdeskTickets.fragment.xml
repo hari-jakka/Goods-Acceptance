@@ -1,0 +1,54 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+    <Table
+        id="ticketsTable"
+        inset="false"
+        noDataText="{i18n>lblNoTopdeskTickets}"
+        items="{
+			path: 'to_Tickets'
+		}"
+    >
+        <columns>
+            <Column
+                width="12em"
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblIncidentNumber}" />
+            </Column>
+            <Column
+                width="12em"
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblSubject}" />
+            </Column>
+            <Column
+                width="12em"
+                minScreenWidth="Tablet"
+                demandPopin="true"
+                popinDisplay="Inline"
+            >
+                <Text text="{i18n>lblStatus}" />
+            </Column>
+        </columns>
+
+        <items>
+            <ColumnListItem
+                type="Active"
+                press=".onPressTopdesk"
+            >
+                <cells>
+                    <Text text="{TicketNumber}" />
+                    <Text text="{Subject}" />
+                    <Text text="{Status}" />
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>

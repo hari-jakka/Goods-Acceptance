@@ -1,0 +1,313 @@
+<mvc:View
+    xmlns:upload="sap.m.upload"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:semantic="sap.f.semantic"
+    xmlns:fb="sap.ui.comp.filterbar"
+    controllerName="zxpapap0001a.controller.Worklist"
+>
+    <semantic:SemanticPage
+        id="page"
+        headerPinnable="false"
+        toggleHeaderOnTitleClick="false"
+    >
+        <semantic:titleHeading>
+            <Title
+                id="headingTitle"
+                text="{i18n>lblGoodsReceipt}"
+                level="H2"
+            />
+        </semantic:titleHeading>
+
+        <semantic:headerContent>
+            <HBox alignContent="Center" justifyContent="SpaceBetween" wrap="Wrap">
+                <HBox>
+                    <Button
+                        text="{i18n>lblCreateIncident}"
+                        type="Attention"
+                        press="onTopdeskGenericIncident"
+                        class="sapUiTinyMargin"
+                        width="auto"
+                    />
+
+                    <Button
+                        text="{i18n>lblNoDeliveryFound}"
+                        type="Attention"
+                        press="onNoDeliveryFound"
+                        width="auto"
+                        class="sapUiTinyMargin"
+                    />
+                </HBox>
+
+                <Button
+                    text="{i18n>lblHistory}"
+                    press="onDeliveryHistoryPress"
+                    width="auto"
+                    class="sapUiTinyMargin"
+                />
+            </HBox>
+
+            <fb:FilterBar
+                id="filterbar"
+                showFilterConfiguration="false"
+                showClearOnFB="true"
+                useToolbar="false"
+                showGoOnFB="false"
+                clear=".onClearFB"
+                search=".onSearch"
+                filterChange=".onFilterChange"
+            >
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem
+                        name="StorageLoc"
+                        label="{i18n>lblDepot}"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <Input
+                                id="depotFilter"
+                                showClearIcon="true"
+                                suggestionItems="{depots>/results}"
+                                showSuggestion="true"
+                                change=".onDepotChange"
+                                liveChange="onLiveChangeDepot"
+                            >
+                                <suggestionItems>
+                                    <core:Item
+                                        key="{depots>Kunnr}"
+                                        text="{depots>Kunnr} / {depots>InsphireCode} - {depots>DepotName} - {depots>City} - {depots>Address} - {depots>Country}"
+                                    />
+                                </suggestionItems>
+                            </Input>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+
+                    <fb:FilterGroupItem
+                        name="SubGroup"
+                        label="{i18n>lblSubgroup}"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                id="subgroupFilter"
+                                items="{
+                                        path: '/ZCDS_DELIVERY_SUBGROUP_SUGGEST',
+                                        sorter: { path: 'SubGroup' }
+                                    }"
+                                change="onSearch"
+                            >
+                                <core:Item
+                                    key="{SubGroup}"
+                                    text="{SubGroup}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+
+                    <fb:FilterGroupItem
+                        name="Supplier"
+                        label="{i18n>lblSupplier}"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                id="supplierFilter"
+                                items="{
+                            path: '/ZXPAP0001_SUPPLIER_SUGGEST',
+                            sorter: { path: 'SupplierName' }
+				}"
+                                change="onSearch"
+                            >
+                                <core:Item
+                                    key="{SupplierName}"
+                                    text="{SupplierName}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+
+            <Button
+                id="depotAccessBtn"
+                text="{i18n>lblDepotAccessMissing}"
+                press="onDepotAccessPress"
+                width="auto"
+                class="sapUiTinyMargin"
+            />
+        </semantic:headerContent>
+
+        <semantic:content>
+            <Table
+                id="table"
+                width="auto"
+                items="{
+                    path: '/ZOPEN_DELIVERY_OVERVIEW_GR',
+                    sorter: {
+                            path: 'DeliveryDate',
+                            descending: false,
+                            group: '.getGroup'
+                    },
+                    groupHeaderFactory: '.getGroupHeader',
+                    suspended: true
+                }"
+                noDataText="{worklistView>/tableNoDataText}"
+                busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+                growing="true"
+                growingScrollToLoad="true"
+                updateFinished=".onUpdateFinished"
+            >
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title
+                            id="tableHeader"
+                            text="{worklistView>/worklistTableTitle}"
+                            level="H3"
+                        />
+                        <ToolbarSpacer />
+                        <SearchField
+                            id="searchField"
+                            placeholder="{i18n>lblSearch_}"
+                            tooltip="{i18n>lblSearch_}"
+                            search=".onSearch"
+                        >
+                            <layoutData>
+                                <OverflowToolbarLayoutData
+                                    maxWidth="200px"
+                                    priority="NeverOverflow"
+                                />
+                            </layoutData>
+                        </SearchField>
+                    </OverflowToolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column>
+                        <Text text="{i18n>lblItem}" />
+                    </Column>
+
+                    <Column
+                        id="idPO"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text
+                            text="{i18n>lblOrder}"
+                            id="idPOCol"
+                        />
+                    </Column>
+
+                    <Column>
+                        <Text text="{i18n>lblMaterial}" />
+                    </Column>
+
+                    <Column
+                        id="idSubgroupCol"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text text="{i18n>lblSubgroup}" />
+                    </Column>
+
+                    <Column
+                        id="supplierSerialnumberColumn"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text
+                            text="{i18n>lblSupplierSerialNumber}"
+                            id="supplierSerialNumberColumnTitle"
+                        />
+                    </Column>
+
+                    <Column
+                        id="outstandingColumn"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="Inline"
+                    >
+                        <Text
+                            text="{i18n>lblQuantity}"
+                            id="outstandingColumnTitle"
+                        />
+                    </Column>
+
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                        popinDisplay="WithoutHeader"
+                    >
+                        <Text text="{i18n>lblDeliveryDate}" />
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem
+                        id="listItem"
+                        type="Active"
+                        press=".onPress2"
+                        highlight="{= ${Overdue} > 0 ? 'Error' : 'None' }"
+                    >
+                        <cells>
+                            <HBox>
+                                <Text
+                                    text="{DeliveryPosition}"
+                                    id="text6"
+                                />
+                                <core:Icon
+                                    src="sap-icon://high-priority"
+                                    visible="{= ${IsWarning} === 'Y'}"
+                                    class="sapUiTinyMargin"
+                                    color="orange"
+                                />
+                            </HBox>
+                            <Text
+                                text="{PurchaseOrder}"
+                                id="txtPO"
+                            />
+                            <ObjectIdentifier
+                                title="{MaterialDescription}"
+                                text="{MaterialNumber}"
+                            >
+                                <customData>
+                                    <core:CustomData
+                                        key="mergeKey"
+                                        value="Material"
+                                    />
+                                </customData>
+                            </ObjectIdentifier>
+
+                            <Text text="{SubGroup}" />
+
+                            <Text text="{SupplierSerialnumber}" />
+
+                            <VBox>
+                                <Text
+                                    text="{path:'DeliveryQuantity', type:'sap.ui.model.type.Integer'} {DeliveredUnit}"
+                                />
+                                <Text
+                                    text="({path:'OpenQuantity', type:'sap.ui.model.type.Integer'} {DeliveredUnit} {i18n>lblOpen})"
+                                />
+                            </VBox>
+                            <Text
+                                text="{ path: 'DeliveryDate' , type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy'} }"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </semantic:content>
+    </semantic:SemanticPage>
+
+    <core:Fragment
+        fragmentName="zxpapap0001a.fragments.DeliveryHistoryDialog"
+        type="XML"
+    />
+</mvc:View>
